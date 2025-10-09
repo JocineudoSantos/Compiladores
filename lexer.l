@@ -6,6 +6,19 @@
 #include <string>
 using namespace std;
 
+static const char* METAATTRIBUTES[] = {
+    "ordered","const","derived","subsets","redefines"
+};
+
+static const char* TYPES[] = {
+    "number", "string","boolean","date","time","datetime"
+};
+
+static const char* RESERVEDWORDS[] {
+    "genset","disjoint","complete","general","specifics",
+    "where","package"
+};
+
 static const char* CLASS[] = {
     "event","situation","process","category","mixin",
     "phaseMixin","roleMixin","historicalRoleMixin","kind","collective",
@@ -14,12 +27,12 @@ static const char* CLASS[] = {
 };
 
 static const char* RELATION[] = {
-"material","derivation","comparative","mediation",
-"characterization", "externalDependence", "componentOf", "memberOf",
-"subCollectionOf", "subQualityOf", "instantiation", "termination",
-"participational", "participation", "historicalDependence", "creation",
-"manifestation", "bringsAbout", "triggers", "composition", "aggregation",
-"inherence", "value", "formal", "constitution"
+    "material","derivation","comparative","mediation",
+    "characterization","externalDependence","componentOf","memberOf",
+    "subCollectionOf","subQualityOf","instantiation","termination",
+    "participational","participation","historicalDependence", "creation",
+    "manifestation","bringsAbout","triggers","composition","aggregation",
+    "inherence","value","formal","constitution"
 };
 
 static const char* SPECIALSYMBOLS[] = {
@@ -40,9 +53,27 @@ void update_position(const char* yytext) {
     }
 }
 
-bool is_special_symbol(const char* text) {
-    for (const char* sym : SPECIALSYMBOLS) {
-        if (strcmp(text, sym) == 0) {
+bool is_metaattribute(const char* text) {
+    for (const char* attr : METAATTRIBUTES) {
+        if (strcasecmp(text, attr) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool is_type(const char* text) {
+    for (const char* type : TYPES) {
+        if (strcasecmp(text, type) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool is_reservedword(const char* text) {
+    for (const char* word : RESERVEDWORDS) {
+        if (strcasecmp(text, word) == 0) {
             return true;
         }
     }
@@ -67,6 +98,16 @@ bool is_relation(const char* text) {
     return false;
 }
 
+
+bool is_special_symbol(const char* text) {
+    for (const char* sym : SPECIALSYMBOLS) {
+        if (strcmp(text, sym) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 %}
 
 DIGIT [0-9]
@@ -78,14 +119,45 @@ COMMENT "//".*|"/\*"(.\n|[^*])*\*+"/"
 %%
 {ID} {
     update_position(yytext);
-    if (is_classs(yytext)) {
+    if (is_metaattribute(yytext)) {
+        cout << "METAATTRIBUTE(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+    } else if (is_type(yytext)) {
+        cout << "TYPE(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+    } else if (is_reservedword(yytext)) {
+        cout << "RESERVEDWORD(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+    } else if (is_classs(yytext)) {
         cout << "CLASS(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
     } else if (is_relation(yytext)) {
         cout << "RELATION(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
     } else {
-        cout << "ID(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+        cout << "IDENTIFIER(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
     }
 } 
+{DIGIT}+ {
+    update_position(yytext);
+    cout << "NUMBER(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+}
+{STRING} {
+    update_position(yytext);
+    cout << "STRING(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+}
+{COMMENT} {
+    update_position(yytext); // IGNORA COMENTÁRIOS
+}
+[ \t\r]+ {
+    update_position(yytext); // IGNORA ESPAÇOS EM BRANCO
+}
+\n {
+    update_position(yytext);
+}
+. {
+    update_position(yytext);
+    if (is_special_symbol(yytext)) {
+        cout << "SPECIAL(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+    } else {
+        cout << "UNKNOWN(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+    }
+}
 %%
 
 int yywrap() { return 1; }
