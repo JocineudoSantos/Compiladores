@@ -464,9 +464,27 @@ void update_position(const char* yytext) {
     }
 }
 
-bool is_special_symbol(const char* text) {
-    for (const char* sym : SPECIALSYMBOLS) {
-        if (strcmp(text, sym) == 0) {
+bool is_metaattribute(const char* text) {
+    for (const char* attr : METAATTRIBUTES) {
+        if (strcasecmp(text, attr) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool is_type(const char* text) {
+    for (const char* type : TYPES) {
+        if (strcasecmp(text, type) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool is_reservedword(const char* text) {
+    for (const char* word : RESERVEDWORDS) {
+        if (strcasecmp(text, word) == 0) {
             return true;
         }
     }
@@ -491,8 +509,18 @@ bool is_relation(const char* text) {
     return false;
 }
 
-#line 495 "lex.yy.cc"
-#line 496 "lex.yy.cc"
+
+bool is_special_symbol(const char* text) {
+    for (const char* sym : SPECIALSYMBOLS) {
+        if (strcmp(text, sym) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+#line 523 "lex.yy.cc"
+#line 524 "lex.yy.cc"
 
 #define INITIAL 0
 
@@ -624,9 +652,9 @@ YY_DECL
 		}
 
 	{
-#line 91 "lexer.l"
+#line 119 "lexer.l"
 
-#line 630 "lex.yy.cc"
+#line 658 "lex.yy.cc"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -685,21 +713,27 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 92 "lexer.l"
+#line 120 "lexer.l"
 {
     update_position(yytext);
-    if (is_classs(yytext)) {
+    if (is_metaattribute(yytext)) {
+        cout << "METAATTRIBUTE(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+    } else if (is_type(yytext)) {
+        cout << "TYPE(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+    } else if (is_reservedword(yytext)) {
+        cout << "RESERVEDWORD(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+    } else if (is_classs(yytext)) {
         cout << "CLASS(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
     } else if (is_relation(yytext)) {
         cout << "RELATION(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
     } else {
-        cout << "ID(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+        cout << "IDENTIFIER(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
     }
 } 
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 102 "lexer.l"
+#line 136 "lexer.l"
 {
     update_position(yytext);
     cout << "NUMBER(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
@@ -708,7 +742,7 @@ YY_RULE_SETUP
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 106 "lexer.l"
+#line 140 "lexer.l"
 {
     update_position(yytext);
     cout << "STRING(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
@@ -717,14 +751,14 @@ YY_RULE_SETUP
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 110 "lexer.l"
+#line 144 "lexer.l"
 {
     update_position(yytext); // IGNORA COMENTÁRIOS
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 113 "lexer.l"
+#line 147 "lexer.l"
 {
     update_position(yytext); // IGNORA ESPAÇOS EM BRANCO
 }
@@ -732,14 +766,14 @@ YY_RULE_SETUP
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 116 "lexer.l"
+#line 150 "lexer.l"
 {
     update_position(yytext);
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 119 "lexer.l"
+#line 153 "lexer.l"
 {
     update_position(yytext);
     if (is_special_symbol(yytext)) {
@@ -751,10 +785,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 127 "lexer.l"
+#line 161 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 758 "lex.yy.cc"
+#line 792 "lex.yy.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1717,7 +1751,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 127 "lexer.l"
+#line 161 "lexer.l"
 
 
 int yywrap() { return 1; }
