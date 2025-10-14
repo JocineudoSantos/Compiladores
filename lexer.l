@@ -1,5 +1,4 @@
 %option noyywrap c++
-%option case-insensitive
 
 %{
 #include <iostream>
@@ -36,19 +35,18 @@ static const char* RELATION[] = {
 };
 
 static const char* SPECIALSYMBOLS[] = {
-    "{","}","(“",")","[","]","..","<>--","--<>","*","@",":"
+    "{","}","(“",")","[","]","..","<>--","--<>","*","@",":","--"
 };
 
 int line_number = 1;
-int column_number = 1;
+int column_number = 0;
 
 void update_position(const char* yytext) {
+    column_number++;
     for (const char* p = yytext; *p; ++p) {
         if (*p == '\n') {
             line_number++;
             column_number = 1;
-        } else {
-            column_number++;
         }
     }
 }
@@ -110,54 +108,63 @@ bool is_special_symbol(const char* text) {
 
 %}
 
-DIGIT [0-9]
+UPPER  [A-Z]
+LOWER  [a-z]
+LETTER [a-zA-Z]
+NUMBER [0-9]
+UNDERLINE "_"
+
 ID [a-zA-Z_][a-zA-Z0-9_]*
-STRING \"(\\.|[^\"])*\"
-COMMENT "//".*|"/\*"(.\n|[^*])*\*+"/"
+CLASS_NAME    {UPPER}({LETTER}|{NUMBER}|{UNDERLINE})*
+DATATYPE_NAME {LETTER}+"DataType"
+RELATION_NAME {LOWER}({LETTER}|{NUMBER}|{UNDERLINE})*
+INSTANCE_NAME {LETTER}({LETTER}|{NUMBER}|{UNDERLINE})*{NUMBER}+
 
 
 %%
+
+{DATATYPE_NAME} {
+    update_position(yytext);
+    cout << "{ \n" << " type: DATATYPE_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+}
+
+{INSTANCE_NAME} {
+    update_position(yytext);
+    cout << "{ \n" << " type INSTANCE_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+}
+
+{RELATION_NAME} {
+    update_position(yytext);
+    cout << "{ \n" << " type: RELATION_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+}
+
+{CLASS_NAME} {
+    update_position(yytext);
+    cout << "{ \n" << " type: CLASS_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+}
+
+
 {ID} {
     update_position(yytext);
-    if (is_metaattribute(yytext)) {
-        cout << "METAATTRIBUTE(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
-    } else if (is_type(yytext)) {
-        cout << "TYPE(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
-    } else if (is_reservedword(yytext)) {
-        cout << "RESERVEDWORD(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
-    } else if (is_classs(yytext)) {
-        cout << "CLASS(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
-    } else if (is_relation(yytext)) {
-        cout << "RELATION(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
-    } else {
-        cout << "IDENTIFIER(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
-    }
-} 
-{DIGIT}+ {
-    update_position(yytext);
-    cout << "NUMBER(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
+    cout << "{ \n" << " type: ID\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
 }
-{STRING} {
-    update_position(yytext);
-    cout << "STRING(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
-}
-{COMMENT} {
-    update_position(yytext); // IGNORA COMENTÁRIOS
-}
+
 [ \t\r]+ {
-    update_position(yytext); // IGNORA ESPAÇOS EM BRANCO
+    update_position(yytext);
 }
+
 \n {
     update_position(yytext);
 }
+
 . {
     update_position(yytext);
-    if (is_special_symbol(yytext)) {
-        cout << "SPECIAL(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
-    } else {
-        cout << "UNKNOWN(" << yytext << ") at line " << line_number << ", column " << column_number - yyleng << endl;
-    }
+    cout << "{ \n" << " type: UNKNOWN\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
 }
+
+
+
+
 %%
 
 int yywrap() { return 1; }

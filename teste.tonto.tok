@@ -1,19 +1,114 @@
-RESERVEDWORD(package) at line 1, column 1
-IDENTIFIER(teste) at line 1, column 9
-CLASS(kind) at line 3, column 1
-IDENTIFIER(Pessoa) at line 3, column 6
-SPECIAL({) at line 3, column 13
-IDENTIFIER(name) at line 4, column 5
-SPECIAL(:) at line 4, column 10
-TYPE(String) at line 4, column 12
-IDENTIFIER(idade) at line 5, column 5
-SPECIAL(:) at line 5, column 11
-TYPE(number) at line 5, column 13
-SPECIAL(}) at line 6, column 1
-CLASS(quality) at line 7, column 1
-IDENTIFIER(Cor) at line 7, column 9
-SPECIAL({) at line 7, column 13
-IDENTIFIER(valor) at line 8, column 5
-SPECIAL(:) at line 8, column 11
-TYPE(String) at line 8, column 13
-SPECIAL(}) at line 9, column 1
+{ 
+ type: RELATION_NAME
+ lexema: "package"
+ linha:  1
+ coluna: 1
+}
+{ 
+ type: DATATYPE_NAME
+ lexema: "testeDataType"
+ linha:  1
+ coluna: 3
+}
+{ 
+ type: RELATION_NAME
+ lexema: "kind"
+ linha:  3
+ coluna: 2
+}
+{ 
+ type: CLASS_NAME
+ lexema: "Pessoa"
+ linha:  3
+ coluna: 4
+}
+{ 
+ type: UNKNOWN
+ lexema: "{"
+ linha: 3
+ coluna: 6
+}
+{ 
+ type: RELATION_NAME
+ lexema: "name"
+ linha:  4
+ coluna: 3
+}
+{ 
+ type: UNKNOWN
+ lexema: ":"
+ linha: 4
+ coluna: 5
+}
+{ 
+ type: CLASS_NAME
+ lexema: "String"
+ linha:  4
+ coluna: 7
+}
+{ 
+ type: RELATION_NAME
+ lexema: "idade"
+ linha:  5
+ coluna: 3
+}
+{ 
+ type: UNKNOWN
+ lexema: ":"
+ linha: 5
+ coluna: 5
+}
+{ 
+ type: RELATION_NAME
+ lexema: "number"
+ linha:  5
+ coluna: 7
+}
+{ 
+ type: UNKNOWN
+ lexema: "}"
+ linha: 6
+ coluna: 2
+}
+{ 
+ type: RELATION_NAME
+ lexema: "quality"
+ linha:  7
+ coluna: 2
+}
+{ 
+ type: CLASS_NAME
+ lexema: "Cor"
+ linha:  7
+ coluna: 4
+}
+{ 
+ type: UNKNOWN
+ lexema: "{"
+ linha: 7
+ coluna: 6
+}
+{ 
+ type: RELATION_NAME
+ lexema: "valor"
+ linha:  8
+ coluna: 3
+}
+{ 
+ type: UNKNOWN
+ lexema: ":"
+ linha: 8
+ coluna: 5
+}
+{ 
+ type: CLASS_NAME
+ lexema: "String"
+ linha:  8
+ coluna: 7
+}
+{ 
+ type: UNKNOWN
+ lexema: "}"
+ linha: 9
+ coluna: 2
+}
