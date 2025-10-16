@@ -10,12 +10,12 @@ static const char* METAATTRIBUTES[] = {
 };
 
 static const char* TYPES[] = {
-    "number", "string","boolean","date","time","datetime"
+    "number","string","boolean","date","time","datetime"
 };
 
-static const char* RESERVEDWORDS[] {
+static const char* RESERVEDWORDS[] = {
     "genset","disjoint","complete","general","specifics",
-    "where","package"
+    "where","package","import","functional-complexes"
 };
 
 static const char* CLASS[] = {
@@ -39,14 +39,13 @@ static const char* SPECIALSYMBOLS[] = {
 };
 
 int line_number = 1;
-int column_number = 0;
+int column_number = 1;
 
 void update_position(const char* yytext) {
-    column_number++;
     for (const char* p = yytext; *p; ++p) {
         if (*p == '\n') {
             line_number++;
-            column_number = 1;
+            column_number = 1;  // Nova linha → reinicia coluna
         }
     }
 }
@@ -111,46 +110,87 @@ bool is_special_symbol(const char* text) {
 UPPER  [A-Z]
 LOWER  [a-z]
 LETTER [a-zA-Z]
-NUMBER [0-9]
+DIGIT    [0-9]
 UNDERLINE "_"
+STRING          \"([^\\\"]|\\.)*\"
+DATATYPE "DataType"
 
 ID [a-zA-Z_][a-zA-Z0-9_]*
-CLASS_NAME    {UPPER}({LETTER}|{NUMBER}|{UNDERLINE})*
-DATATYPE_NAME {LETTER}+"DataType"
-RELATION_NAME {LOWER}({LETTER}|{NUMBER}|{UNDERLINE})*
-INSTANCE_NAME {LETTER}({LETTER}|{NUMBER}|{UNDERLINE})*{NUMBER}+
+
+NUMBER         {DIGIT}+(\.{DIGIT}+)?
+CLASS_NAME     {UPPER}({LETTER}|{DIGIT}|{UNDERLINE})*
+DATATYPE_NAME  {LETTER}*+{DATATYPE}
+RELATION_NAME  {LOWER}({LETTER}|{DIGIT}|{UNDERLINE})*
+INSTANCE_NAME  {LETTER}({LETTER}|{DIGIT}|{UNDERLINE})*{DIGIT}+
 
 
 %%
 
+
+
 {DATATYPE_NAME} {
     update_position(yytext);
     cout << "{ \n" << " type: DATATYPE_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    column_number++;  // Conta como separador de palavras
 }
 
 {INSTANCE_NAME} {
     update_position(yytext);
     cout << "{ \n" << " type INSTANCE_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    column_number++;  // Conta como separador de palavras
 }
 
 {RELATION_NAME} {
     update_position(yytext);
     cout << "{ \n" << " type: RELATION_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    column_number++;  // Conta como separador de palavras
 }
 
 {CLASS_NAME} {
     update_position(yytext);
     cout << "{ \n" << " type: CLASS_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    column_number++;  // Conta como separador de palavras    
 }
 
+{NUMBER} {
+    update_position(yytext);
+    cout << "{ \n" << " type: NUMBER\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    column_number++;  // Conta como separador de palavras    
+}
 
+{STRING} {
+   update_position(yytext);
+    cout << "{ \n" << " type: STRING\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    column_number++;  // Conta como separador de palavras    
+}
+
+"{"|"}"|"(“"|")"|"["|"]"|".."|"<>--"|"--<>"|"*"|"@"|":"|"--" {
+    update_position(yytext);
+    cout << "{ \n" << " type: SPECIAL_SYMBOL\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+    column_number++;  // Conta como separador de palavras   
+}
 {ID} {
     update_position(yytext);
-    cout << "{ \n" << " type: ID\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+
+    if (is_reservedword(yytext)) {
+        cout << "{ \n type: RESERVED_WORD\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+    } else if (is_metaattribute(yytext)) {
+        cout << "{ \n type: META_ATTRIBUTE\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+    } else if (is_type(yytext)) {
+        cout << "{ \n type: TYPE\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+    } else if (is_classs(yytext)) {
+        cout << "{ \n type: CLASS_KEYWORD\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+    } else if (is_relation(yytext)) {
+        cout << "{ \n type: RELATION_KEYWORD\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+    } else {
+        cout << "{ \n type: IDENTIFIER\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+    }
+
+    column_number++;  // Conta como separador de palavras
 }
 
 [ \t\r]+ {
-    update_position(yytext);
+    
 }
 
 \n {

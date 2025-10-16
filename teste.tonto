@@ -1,9 +1,9 @@
-package testeDataType
+package teste
 
 kind Pessoa {
     name : String
     idade : number
 }
-quality Cor {
+quality 1 {1
     valor : String
 }

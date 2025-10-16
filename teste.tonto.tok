@@ -5,110 +5,116 @@
  coluna: 1
 }
 { 
- type: DATATYPE_NAME
- lexema: "testeDataType"
+ type: RELATION_NAME
+ lexema: "teste"
  linha:  1
- coluna: 3
+ coluna: 2
 }
 { 
  type: RELATION_NAME
  lexema: "kind"
  linha:  3
- coluna: 2
+ coluna: 1
 }
 { 
  type: CLASS_NAME
  lexema: "Pessoa"
  linha:  3
- coluna: 4
+ coluna: 2
 }
 { 
- type: UNKNOWN
+ type: SPECIAL_SYMBOL
  lexema: "{"
  linha: 3
- coluna: 6
+ coluna: 3
 }
 { 
  type: RELATION_NAME
  lexema: "name"
  linha:  4
- coluna: 3
+ coluna: 1
 }
 { 
- type: UNKNOWN
+ type: SPECIAL_SYMBOL
  lexema: ":"
  linha: 4
- coluna: 5
+ coluna: 2
 }
 { 
  type: CLASS_NAME
  lexema: "String"
  linha:  4
- coluna: 7
+ coluna: 3
 }
 { 
  type: RELATION_NAME
  lexema: "idade"
  linha:  5
- coluna: 3
+ coluna: 1
 }
 { 
- type: UNKNOWN
+ type: SPECIAL_SYMBOL
  lexema: ":"
  linha: 5
- coluna: 5
+ coluna: 2
 }
 { 
  type: RELATION_NAME
  lexema: "number"
  linha:  5
- coluna: 7
+ coluna: 3
 }
 { 
- type: UNKNOWN
+ type: SPECIAL_SYMBOL
  lexema: "}"
  linha: 6
- coluna: 2
+ coluna: 1
 }
 { 
  type: RELATION_NAME
  lexema: "quality"
  linha:  7
+ coluna: 1
+}
+{ 
+ type: NUMBER
+ lexema: "1"
+ linha:  7
  coluna: 2
 }
 { 
- type: CLASS_NAME
- lexema: "Cor"
- linha:  7
- coluna: 4
-}
-{ 
- type: UNKNOWN
+ type: SPECIAL_SYMBOL
  lexema: "{"
  linha: 7
- coluna: 6
+ coluna: 3
+}
+{ 
+ type: NUMBER
+ lexema: "1"
+ linha:  7
+ coluna: 4
 }
 { 
  type: RELATION_NAME
  lexema: "valor"
  linha:  8
- coluna: 3
+ coluna: 1
 }
 { 
- type: UNKNOWN
+ type: SPECIAL_SYMBOL
  lexema: ":"
  linha: 8
- coluna: 5
+ coluna: 2
 }
 { 
  type: CLASS_NAME
  lexema: "String"
  linha:  8
- coluna: 7
+ coluna: 3
 }
 { 
- type: UNKNOWN
+ type: SPECIAL_SYMBOL
  lexema: "}"
  linha: 9
- coluna: 2
+ coluna: 1
 }
