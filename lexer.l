@@ -206,7 +206,7 @@ CARDINALITY    "["{DIGIT}+"]"
         cout << "{ \n" << " type: RELATION_STEREOTYPE\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
         relation_stereotypes.insert(yytext);
     } else if (is_reservedword(yytext)) {
-        cout << "{ \n" << " type: RESERVEDWORD\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+        cout << "{ \n" << " type: RESERVED_WORD\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
         reserved_words.insert(yytext);
     } else if (is_metaattribute(yytext)) {
         cout << "{ \n" << " type: METAATTRIBUTE\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";

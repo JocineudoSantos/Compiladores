@@ -32,8 +32,8 @@ int main(int argc, char* argv[]) {
     lexer.yylex();
 
     // Restaura os buffers
-    std::cin.rdbuf(old_cin);
-    std::cout.rdbuf(old_cout);
+    cin.rdbuf(old_cin);
+    cout.rdbuf(old_cout);
 
     // Gera o relatório de contagem
     finalize_lexer(argv[1]);
