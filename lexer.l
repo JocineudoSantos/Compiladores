@@ -106,15 +106,6 @@ bool is_relation(const char* text) {
     return false;
 }
 
-bool is_special_symbol(const char* text) {
-    for (const char* sym : SPECIALSYMBOLS) {
-        if (strcmp(text, sym) == 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
 // Função para escrever o relatório no arquivo - será chamada no final
 void write_report(const string& filename) {
     string report_filename = filename + "_contagem.txt";
@@ -195,9 +186,14 @@ CLASS_NAME     {UPPER}({LETTER}|{DIGIT}|{UNDERLINE})*
 DATATYPE_NAME  {LETTER}*+{DATATYPE}
 RELATION_NAME  {LOWER}({LETTER}|{DIGIT}|{UNDERLINE})*
 INSTANCE_NAME  {LETTER}({LETTER}|{DIGIT}|{UNDERLINE})*{DIGIT}+
+CARDINALITY    "["{DIGIT}+"]"
 
 %%
-
+{CARDINALITY} {
+    update_position(yytext);
+    cout << "{ \n" << " type: CARDINALITY\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    column_number++;
+}
 {DATATYPE_NAME} {
     update_position(yytext);
     cout << "{ \n" << " type: DATATYPE_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";

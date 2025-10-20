@@ -107,28 +107,16 @@
  coluna: 3
 }
 { 
- type: SPECIAL_SYMBOL
- lexema: "["
- linha: 9
- coluna: 4
-}
-{ 
- type: NUMBER
- lexema: "1"
+ type: CARDINALITY
+ lexema: "[1]"
  linha:  9
- coluna: 5
-}
-{ 
- type: SPECIAL_SYMBOL
- lexema: "]"
- linha: 9
- coluna: 6
+ coluna: 4
 }
 { 
  type: CLASS_NAME
  lexema: "CarAgency"
  linha:  9
- coluna: 7
+ coluna: 5
 }
 { 
  type: SPECIAL_SYMBOL
@@ -161,28 +149,16 @@
  coluna: 3
 }
 { 
- type: SPECIAL_SYMBOL
- lexema: "["
- linha: 12
- coluna: 4
-}
-{ 
- type: NUMBER
- lexema: "1"
+ type: CARDINALITY
+ lexema: "[1]"
  linha:  12
- coluna: 5
-}
-{ 
- type: SPECIAL_SYMBOL
- lexema: "]"
- linha: 12
- coluna: 6
+ coluna: 4
 }
 { 
  type: CLASS_NAME
  lexema: "Car"
  linha:  12
- coluna: 7
+ coluna: 5
 }
 { 
  type: SPECIAL_SYMBOL
