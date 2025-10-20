@@ -256,7 +256,7 @@ CARDINALITY    "["{DIGIT}+"]"
 
 {ID} {
     update_position(yytext);
-    cout << "{ \n type: RELATION_KEYWORD\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+    cout << "{ \n type: INDENTIFIER\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
     column_number++;
 }
 
