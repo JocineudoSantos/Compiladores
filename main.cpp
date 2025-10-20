@@ -3,6 +3,9 @@
 #include "FlexLexer.h"
 using namespace std;
 
+// Declaração da função do lexer
+void finalize_lexer(const string& filename);
+
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         cerr << "Uso: " << argv[0] << " arquivo.tonto" << endl;
@@ -28,8 +31,12 @@ int main(int argc, char* argv[]) {
     yyFlexLexer lexer;
     lexer.yylex();
 
+    // Restaura os buffers
     std::cin.rdbuf(old_cin);
     std::cout.rdbuf(old_cout);
+
+    // Gera o relatório de contagem
+    finalize_lexer(argv[1]);
 
     return 0;
 }

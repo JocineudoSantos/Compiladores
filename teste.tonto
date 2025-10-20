@@ -1,9 +1,13 @@
-package teste
+package CarOwnership
 
-kind Pessoa {
-    name : String
-    idade : number
-}
-quality 1 {1
-    valor : String
+kind Organization
+subkind CarAgency specializes Organization
+kind Car
+
+relator CarOwnership {
+    @mediation
+    -- involvesOwner -- [1] CarAgency
+
+    @mediation
+    -- involvesProperty -- [1] Car
 }
