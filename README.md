@@ -2,13 +2,24 @@
 ### PROFESSOR: Patrício de Alencar Silva  
 ### PROJETO: Analisador Léxico para Textual Ontology Language (TONTO)
 
-# CRIADORES
+## CRIADORES
 
 - [@Jocineudo Santos](https://www.github.com/JocineudoSantos)
 - [@Thais Aquino](https://github.com/ThaisAquin0)
 
 
 ---
+
+## ESTRUTURA DO PROJETO
+```bash
+Compiladores/
+├── lexer.l # Arquivo principal do analisador léxico (Flex)
+├── main.cpp # Arquivo principal que executa o analisador
+├── CMakeLists.txt # Configuração de build (opcional)
+├── README.md # Documentação do projeto
+└── teste.tonto # Um teste incluso da biblioteca do professor
+```
+___
 
 ## OBJETIVO
 Projetar um analisador léxico para dar suporte à análise de corretude de uma ontologia especificada textualmente com a linguagem TONTO (Textual Ontology Language).
