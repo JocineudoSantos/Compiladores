@@ -3,7 +3,6 @@
 #include "FlexLexer.h"
 using namespace std;
 
-// Declaração da função do lexer
 void finalize_lexer(const string& filename);
 
 int main(int argc, char* argv[]) {
@@ -18,10 +17,17 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    string saida = string(argv[1]) + ".tok";
+    // Extrai apenas o nome do arquivo e remove o caminho
+    string base = argv[1];
+    size_t pos = base.find_last_of("/\\");
+    string filename = (pos == string::npos ? base : base.substr(pos + 1));
+
+    // Força saída dentro da pasta do módulo
+    string saida = "lexico/" + filename + ".tok";
+
     ofstream out(saida);
     if (!out) {
-        std::cerr << "não foi possivel criar o arquivo" << std::endl;
+        cerr << "não foi possivel criar o arquivo" << endl;
         return 1;
     }
 
@@ -31,11 +37,9 @@ int main(int argc, char* argv[]) {
     yyFlexLexer lexer;
     lexer.yylex();
 
-    // Restaura os buffers
     cin.rdbuf(old_cin);
     cout.rdbuf(old_cout);
 
-    // Gera o relatório de contagem
     finalize_lexer(argv[1]);
 
     return 0;

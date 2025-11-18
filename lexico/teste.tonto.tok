@@ -1,0 +1,168 @@
+{ 
+ type: RESERVED_WORD
+ lexema: "package"
+ linha:  1
+ coluna: 1
+}
+{ 
+ type: CLASS_NAME
+ lexema: "CarOwnership"
+ linha:  1
+ coluna: 2
+}
+{ 
+ type: CLASS_STEREOTYPE
+ lexema: "kind"
+ linha:  3
+ coluna: 1
+}
+{ 
+ type: CLASS_NAME
+ lexema: "Organization"
+ linha:  3
+ coluna: 2
+}
+{ 
+ type: CLASS_STEREOTYPE
+ lexema: "subkind"
+ linha:  4
+ coluna: 1
+}
+{ 
+ type: CLASS_NAME
+ lexema: "CarAgency"
+ linha:  4
+ coluna: 2
+}
+{ 
+ type: RESERVED_WORD
+ lexema: "specializes"
+ linha:  4
+ coluna: 3
+}
+{ 
+ type: CLASS_NAME
+ lexema: "Organization"
+ linha:  4
+ coluna: 4
+}
+{ 
+ type: CLASS_STEREOTYPE
+ lexema: "kind"
+ linha:  5
+ coluna: 1
+}
+{ 
+ type: CLASS_NAME
+ lexema: "Car"
+ linha:  5
+ coluna: 2
+}
+{ 
+ type: RELATION_NAME
+ lexema: "relator"
+ linha:  7
+ coluna: 1
+}
+{ 
+ type: CLASS_NAME
+ lexema: "CarOwnership"
+ linha:  7
+ coluna: 2
+}
+{ 
+ type: SPECIAL_SYMBOL
+ lexema: "{"
+ linha: 7
+ coluna: 3
+}
+{ 
+ type: SPECIAL_SYMBOL
+ lexema: "@"
+ linha: 8
+ coluna: 1
+}
+{ 
+ type: RELATION_STEREOTYPE
+ lexema: "mediation"
+ linha:  8
+ coluna: 2
+}
+{ 
+ type: SPECIAL_SYMBOL
+ lexema: "--"
+ linha: 9
+ coluna: 1
+}
+{ 
+ type: RELATION_NAME
+ lexema: "involvesOwner"
+ linha:  9
+ coluna: 2
+}
+{ 
+ type: SPECIAL_SYMBOL
+ lexema: "--"
+ linha: 9
+ coluna: 3
+}
+{ 
+ type: CARDINALITY
+ lexema: "[1]"
+ linha:  9
+ coluna: 4
+}
+{ 
+ type: CLASS_NAME
+ lexema: "CarAgency"
+ linha:  9
+ coluna: 5
+}
+{ 
+ type: SPECIAL_SYMBOL
+ lexema: "@"
+ linha: 11
+ coluna: 1
+}
+{ 
+ type: RELATION_STEREOTYPE
+ lexema: "mediation"
+ linha:  11
+ coluna: 2
+}
+{ 
+ type: SPECIAL_SYMBOL
+ lexema: "--"
+ linha: 12
+ coluna: 1
+}
+{ 
+ type: RELATION_NAME
+ lexema: "involvesProperty"
+ linha:  12
+ coluna: 2
+}
+{ 
+ type: SPECIAL_SYMBOL
+ lexema: "--"
+ linha: 12
+ coluna: 3
+}
+{ 
+ type: CARDINALITY
+ lexema: "[1]"
+ linha:  12
+ coluna: 4
+}
+{ 
+ type: CLASS_NAME
+ lexema: "Car"
+ linha:  12
+ coluna: 5
+}
+{ 
+ type: SPECIAL_SYMBOL
+ lexema: "}"
+ linha: 13
+ coluna: 1
+}

@@ -161,12 +161,21 @@ CMake
 
 ## COMANDOS NECESSÁRIOS:
 ```bash
-Para criar o lex.yy.cc
-flex lexer.l 
+Comandos caso esteja dentro da pasta lexico
 
-Comando para compilar e criar o arquivo executavel
+Para criar o lex.yy.cc
+flex lexer.l
+
+Comando para compilar e criar o arquivo
 g++ -o tonto_lexer lex.yy.cc main.cpp
 
 Para executar e criar os dois arquivos, os com tokens estará em um .tok, e a contagem em um .txt
 ./tonto_lexer "example".tonto
+
+Comandos caso esteja na pasta compiladores
+flex -o lexico/lex.yy.cc lexico/lexer.l 
+g++ -o lexico/tonto_lexer lexico/lex.yy.cc lexico/main.cpp
+./lexico/tonto_lexer lexico/"example".tonto
+
 ```
+
