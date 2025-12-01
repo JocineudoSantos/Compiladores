@@ -804,7 +804,7 @@ YY_RULE_SETUP
 #line 192 "lexico/lexer.l"
 {
     update_position(yytext);
-    cout << "{ \n" << " type: CARDINALITY\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    cout << "\n" << "CARDINALITY " << yytext << " " << line_number << " " << column_number;
     column_number++;
 }
 	YY_BREAK
@@ -813,7 +813,7 @@ YY_RULE_SETUP
 #line 197 "lexico/lexer.l"
 {
     update_position(yytext);
-    cout << "{ \n" << " type: DATATYPE_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    cout << "\n" << "DATATYPE_NAME " << yytext << " " << line_number << " " << column_number;
     column_number++;
 }
 	YY_BREAK
@@ -823,20 +823,20 @@ YY_RULE_SETUP
 {
     update_position(yytext);
     if(is_relation(yytext)) {
-        cout << "{ \n" << " type: RELATION_STEREOTYPE\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+        cout << "\n" << "RELATION_STEREOTYPE " << yytext << " " << line_number << " " << column_number;
         relation_stereotypes.insert(yytext);
     } else if (is_reservedword(yytext)) {
-        cout << "{ \n" << " type: RESERVED_WORD\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+        cout << "\n" << "RESERVED_WORD " << yytext << " " << line_number << " " << column_number;
         reserved_words.insert(yytext);
     } else if (is_metaattribute(yytext)) {
-        cout << "{ \n" << " type: METAATTRIBUTE\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+        cout << "\n" << "METAATTRIBUTE " << yytext << " " << line_number << " " << column_number;
     } else if (is_type(yytext)) {
-        cout << "{ \n" << " type: TYPE\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+        cout << "\n" << "TYPE " << yytext << " " << line_number << " " << column_number;
     } else if(is_classs(yytext)) {
-        cout << "{ \n" << " type: CLASS_STEREOTYPE\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+        cout << "\n" << "CLASS_STEREOTYPE " << yytext << " " << line_number << " " << column_number;
         class_stereotypes.insert(yytext);
     } else {
-        cout << "{ \n" << " type: RELATION_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+        cout << "\n" << "RELATION_NAME " << yytext << " " << line_number << " " << column_number;
         relations.insert(yytext);
     }
     column_number++;
@@ -847,7 +847,7 @@ YY_RULE_SETUP
 #line 225 "lexico/lexer.l"
 {
     update_position(yytext);
-    cout << "{ \n" << " type: INSTANCE_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    cout << "\n" << "INSTANCE_NAME " << yytext << " " << line_number << " " << column_number;
     column_number++;
 }
 	YY_BREAK
@@ -856,52 +856,51 @@ YY_RULE_SETUP
 #line 231 "lexico/lexer.l"
 {
     update_position(yytext);
-    cout << "{ \n" << " type: CLASS_NAME\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    cout << "\n" << "CLASS_NAME " << yytext << " " << line_number << " " << column_number;
     classes.insert(yytext);
-
     column_number++;    
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 239 "lexico/lexer.l"
+#line 238 "lexico/lexer.l"
 {
     update_position(yytext);
-    cout << "{ \n" << " type: NUMBER\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    cout << "\n" << "NUMBER " << yytext << " " << line_number << " " << column_number;
     column_number++;    
 }
 	YY_BREAK
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 245 "lexico/lexer.l"
+#line 244 "lexico/lexer.l"
 {
    update_position(yytext);
-    cout << "{ \n" << " type: STRING\n lexema: \"" << yytext << "\"\n linha:  " << line_number << "\n coluna: " << column_number << "\n}\n";
+    cout << "\n" << "STRING " << yytext << " " << line_number << " " << column_number;
     column_number++;    
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 251 "lexico/lexer.l"
+#line 250 "lexico/lexer.l"
 {
     update_position(yytext);
-    cout << "{ \n" << " type: SPECIAL_SYMBOL\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+    cout << "\n" << "SPECIAL_SYMBOL " << yytext << " " << line_number << " " << column_number;
     column_number++;   
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 257 "lexico/lexer.l"
+#line 256 "lexico/lexer.l"
 {
     update_position(yytext);
-    cout << "{ \n type: INDENTIFIER\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+    cout << "\n INDENTIFIER " << yytext << " " << line_number << " " << column_number;
     column_number++;
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 263 "lexico/lexer.l"
+#line 262 "lexico/lexer.l"
 {
     // Ignora espaços em branco
 }
@@ -909,25 +908,25 @@ YY_RULE_SETUP
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 267 "lexico/lexer.l"
+#line 266 "lexico/lexer.l"
 {
     update_position(yytext);
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 271 "lexico/lexer.l"
+#line 270 "lexico/lexer.l"
 {
     update_position(yytext);
-    cout << "{ \n" << " type: UNKNOWN\n lexema: \"" << yytext << "\"\n linha: " << line_number << "\n coluna: " << column_number << "\n}\n";
+    cout << "\n" << "UNKNOWN " << yytext << " " << line_number << " " << column_number;
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 276 "lexico/lexer.l"
+#line 275 "lexico/lexer.l"
 ECHO;
 	YY_BREAK
-#line 931 "lexico/lex.yy.cc"
+#line 930 "lexico/lex.yy.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1890,7 +1889,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 276 "lexico/lexer.l"
+#line 275 "lexico/lexer.l"
 
 
 // Função para ser chamada da main após a análise

@@ -1,168 +1,29 @@
-{ 
- type: RESERVED_WORD
- lexema: "package"
- linha:  1
- coluna: 1
-}
-{ 
- type: CLASS_NAME
- lexema: "CarOwnership"
- linha:  1
- coluna: 2
-}
-{ 
- type: CLASS_STEREOTYPE
- lexema: "kind"
- linha:  3
- coluna: 1
-}
-{ 
- type: CLASS_NAME
- lexema: "Organization"
- linha:  3
- coluna: 2
-}
-{ 
- type: CLASS_STEREOTYPE
- lexema: "subkind"
- linha:  4
- coluna: 1
-}
-{ 
- type: CLASS_NAME
- lexema: "CarAgency"
- linha:  4
- coluna: 2
-}
-{ 
- type: RESERVED_WORD
- lexema: "specializes"
- linha:  4
- coluna: 3
-}
-{ 
- type: CLASS_NAME
- lexema: "Organization"
- linha:  4
- coluna: 4
-}
-{ 
- type: CLASS_STEREOTYPE
- lexema: "kind"
- linha:  5
- coluna: 1
-}
-{ 
- type: CLASS_NAME
- lexema: "Car"
- linha:  5
- coluna: 2
-}
-{ 
- type: RELATION_NAME
- lexema: "relator"
- linha:  7
- coluna: 1
-}
-{ 
- type: CLASS_NAME
- lexema: "CarOwnership"
- linha:  7
- coluna: 2
-}
-{ 
- type: SPECIAL_SYMBOL
- lexema: "{"
- linha: 7
- coluna: 3
-}
-{ 
- type: SPECIAL_SYMBOL
- lexema: "@"
- linha: 8
- coluna: 1
-}
-{ 
- type: RELATION_STEREOTYPE
- lexema: "mediation"
- linha:  8
- coluna: 2
-}
-{ 
- type: SPECIAL_SYMBOL
- lexema: "--"
- linha: 9
- coluna: 1
-}
-{ 
- type: RELATION_NAME
- lexema: "involvesOwner"
- linha:  9
- coluna: 2
-}
-{ 
- type: SPECIAL_SYMBOL
- lexema: "--"
- linha: 9
- coluna: 3
-}
-{ 
- type: CARDINALITY
- lexema: "[1]"
- linha:  9
- coluna: 4
-}
-{ 
- type: CLASS_NAME
- lexema: "CarAgency"
- linha:  9
- coluna: 5
-}
-{ 
- type: SPECIAL_SYMBOL
- lexema: "@"
- linha: 11
- coluna: 1
-}
-{ 
- type: RELATION_STEREOTYPE
- lexema: "mediation"
- linha:  11
- coluna: 2
-}
-{ 
- type: SPECIAL_SYMBOL
- lexema: "--"
- linha: 12
- coluna: 1
-}
-{ 
- type: RELATION_NAME
- lexema: "involvesProperty"
- linha:  12
- coluna: 2
-}
-{ 
- type: SPECIAL_SYMBOL
- lexema: "--"
- linha: 12
- coluna: 3
-}
-{ 
- type: CARDINALITY
- lexema: "[1]"
- linha:  12
- coluna: 4
-}
-{ 
- type: CLASS_NAME
- lexema: "Car"
- linha:  12
- coluna: 5
-}
-{ 
- type: SPECIAL_SYMBOL
- lexema: "}"
- linha: 13
- coluna: 1
-}
+
+RESERVED_WORD package 1 1
+CLASS_NAME CarOwnership 1 2
+CLASS_STEREOTYPE kind 3 1
+CLASS_NAME Organization 3 2
+CLASS_STEREOTYPE subkind 4 1
+CLASS_NAME CarAgency 4 2
+RESERVED_WORD specializes 4 3
+CLASS_NAME Organization 4 4
+CLASS_STEREOTYPE kind 5 1
+CLASS_NAME Car 5 2
+RELATION_NAME relator 7 1
+CLASS_NAME CarOwnership 7 2
+SPECIAL_SYMBOL { 7 3
+SPECIAL_SYMBOL @ 8 1
+RELATION_STEREOTYPE mediation 8 2
+SPECIAL_SYMBOL -- 9 1
+RELATION_NAME involvesOwner 9 2
+SPECIAL_SYMBOL -- 9 3
+CARDINALITY [1] 9 4
+CLASS_NAME CarAgency 9 5
+SPECIAL_SYMBOL @ 11 1
+RELATION_STEREOTYPE mediation 11 2
+SPECIAL_SYMBOL -- 12 1
+RELATION_NAME involvesProperty 12 2
+SPECIAL_SYMBOL -- 12 3
+CARDINALITY [1] 12 4
+CLASS_NAME Car 12 5
+SPECIAL_SYMBOL } 13 1
