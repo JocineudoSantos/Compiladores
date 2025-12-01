@@ -11,9 +11,7 @@
 
 using namespace std;
 
-/* ========================================================================== */
-/* ESTRUTURAS DE DADOS                                                        */
-/* ========================================================================== */
+//ESTRUTURAS DE DADOS
 
 struct EnumInformacoes {
     string name;
@@ -130,7 +128,7 @@ string joinOptional(char* s) {
 %token DISJOINT SPECIALIZES IMPORT COMPLETE FUNCTIONAL_COMPLEXES PACKAGE 
     WHERE GENSET OF SPECIFICS LBRACE RBRACE LBRACKET RBRACKET COLON DOT COMMA
     ARROW_COMPOSITION ARROW_ASSOCIATION ARROW_AGGREGATION
-    ARROW_AGGREGATION_EXISTENTIAL RELATION ENUM DATATYPE GENERAL
+    ARROW_AGGREGATION_EXISTENTIAL RELATION ENUM DATATYPE GENERAL ERROR
 
 %token <strval> HAS NATIVE_TYPE CLASS_STEREOTYPE MATERIAL RELATION_STEREOTYPE NUM ID CARDINALITY
 
@@ -205,6 +203,10 @@ declaracao:
     | relacao_externa
     | genset
     | classe_subkind
+    | ERROR { 
+        yyerror("Erro de sintaxe detectado");
+        yyerrok;  // reseta o estado de erro
+    }
     ;
 
 // CLASSES

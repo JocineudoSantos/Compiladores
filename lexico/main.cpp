@@ -5,7 +5,6 @@
 namespace fs = std::filesystem;
 using namespace std;
 
-void finalize_lexer(const string& filename);
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -41,7 +40,8 @@ int main(int argc, char* argv[]) {
     cin.rdbuf(old_cin);
     cout.rdbuf(old_cout);
 
-    finalize_lexer(argv[1]);
+    // Aviso de sucesso
+    cout << "Análise concluída com sucesso! Arquivo de saída: " << saida << endl;
 
     return 0;
 }

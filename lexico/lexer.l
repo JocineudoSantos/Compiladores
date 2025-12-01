@@ -33,7 +33,7 @@ static const char* RELATION[] = {
     "subCollectionOf","subQualityOf","instantiation","termination",
     "participational","participation","historicalDependence", "creation",
     "manifestation","bringsAbout","triggers","composition","aggregation",
-    "inherence","value","formal","constitution"
+    "inherence","value","formal","constitution","of"
 };
 
 static const char* SPECIALSYMBOLS[] = {
@@ -113,68 +113,6 @@ bool is_relation(const char* text) {
     return false;
 }
 
-// Função para escrever o relatório no arquivo - será chamada no final
-void write_report(const string& filename) {
-    string report_filename = filename + "_contagem.txt";
-    ofstream file(report_filename);
-    if (!file.is_open()) {
-        cerr << "Erro ao criar arquivo de relatório!" << endl;
-        return;
-    }
-    
-    file << "=== RELATÓRIO DE CONTAGEM ÚNICA ===\n\n";
-    
-    file << "CLASSES: " << classes.size() << "\n";
-    for (const auto& cls : classes) {
-        file << "  - " << cls << "\n";
-    }
-    file << "\n";
-    
-    file << "RELAÇÕES: " << relations.size() << "\n";
-    for (const auto& rel : relations) {
-        file << "  - " << rel << "\n";
-    }
-    file << "\n";
-    
-    file << "PALAVRAS RESERVADAS: " << reserved_words.size() << "\n";
-    for (const auto& word : reserved_words) {
-        file << "  - " << word << "\n";
-    }
-    file << "\n";
-    
-    file << "CLASSES ESTEREÓTIPOS: " << class_stereotypes.size() << "\n";
-    for (const auto& stereo : class_stereotypes) {
-        file << "  - " << stereo << "\n";
-    }
-    file << "\n";
-    
-    file << "RELAÇÕES ESTEREÓTIPOS: " << relation_stereotypes.size() << "\n";
-    for (const auto& rel_stereo : relation_stereotypes) {
-        file << "  - " << rel_stereo << "\n";
-    }
-    file << "\n";
-
-    int total = classes.size() + relations.size() + reserved_words.size() + 
-                class_stereotypes.size() + relation_stereotypes.size() + 
-                metaattributes.size() + types.size();
-    
-    file << "=== TOTAL GERAL: " << total << " elementos únicos ===\n";
-    
-    file.close();
-    cout << "Relatório de contagem gerado em: " << report_filename << endl;
-}
-
-// Função para obter contagens (para uso externo se necessário)
-extern "C" {
-    void get_counts(int* class_count, int* relation_count, int* reserved_count, 
-                   int* class_stereo_count, int* relation_stereo_count) {
-        *class_count = classes.size();
-        *relation_count = relations.size();
-        *reserved_count = reserved_words.size();
-        *class_stereo_count = class_stereotypes.size();
-        *relation_stereo_count = relation_stereotypes.size();
-    }
-}
 
 %}
 
@@ -251,6 +189,10 @@ CARDINALITY    "["{DIGIT}+"]"
     int token_column = update_position(yytext);
     cout << "SPECIAL_SYMBOL " << yytext << " " << line_number << " " << token_column << "\n";  
 }
+"//".* { 
+    // Ignora comentários de linha
+    update_position(yytext); // se você quiser atualizar posição
+}
 
 {ID} {
     int token_column = update_position(yytext);
@@ -272,11 +214,6 @@ CARDINALITY    "["{DIGIT}+"]"
 }
 
 %%
-
-// Função para ser chamada da main após a análise
-void finalize_lexer(const string& filename) {
-    write_report(filename);
-}
 
 int yywrap() { 
     return 1; 
