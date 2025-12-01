@@ -38,8 +38,8 @@ struct EnumInformacoes {
     vector<string> literals;  // Valores do Enum
 };
 
-// Informações de Relação Interna (dentro de classes)
-struct RelacoesInternas {
+// Informações de relacoesação Interna (dentro de classes)
+struct relacoesacoesInternas {
     string nome;
     string estereotipo;
     string sourceCardinality;
@@ -47,8 +47,8 @@ struct RelacoesInternas {
     string targetClass;
 };
 
-// Informações de Relação Geral
-struct RelationInfomacoes {
+// Informações de relacoesação Geral
+struct relacoesationInfomacoes {
     string estereotipo;
     string tipo; 
     string detalhes; 
@@ -60,7 +60,7 @@ struct ClassesInformacoes {
     string estereotipo;
     vector<string> parents;
     vector<string> attributes;
-    vector<RelacoesInternas> internalRelations;
+    vector<relacoesacoesInternas> internalrelacoesations;
 };
 
 // Informações de Conjunto de Generalização
@@ -76,7 +76,7 @@ struct PacoteInformacoes {
     vector<ClassesInformacoes> classes;
     vector<GensetInfo> gensets;
     vector<EnumInformacoes> enums;
-    vector<RelationInfomacoes> externalRelations;
+    vector<relacoesationInfomacoes> externalrelacoesations;
 };
 
 // Informações de Tipo de Dado
@@ -85,7 +85,7 @@ struct DatatypeInformacoes {
     string baseType; 
 };
 
-// Informações de Erro para Relatório
+// Informações de Erro para relacoesatório
 struct Erro {
     int line;
     int col;
@@ -101,8 +101,8 @@ struct Erro {
 PacoteInformacoes* pacoteAtual = nullptr;    // Pacote sendo processado
 ClassesInformacoes* currentClass = nullptr;     // Classe sendo processada
 
-// Sistema de arquivos e relatórios
-ofstream reportFile;                   // Arquivo de relatório de saída
+// Sistema de arquivos e relacoesatórios
+ofstream reportFile;                   // Arquivo de relacoesatório de saída
 extern FILE *tokenFile;                // Arquivo de tokens (externo)
 extern std::string currentFileName;    // Nome do arquivo atual
 
@@ -122,7 +122,7 @@ int columnNumber;                      // Número da coluna atual
 
 // Estruturas principais de armazenamento
 vector<PacoteInformacoes> pacotes;           // Todos os pacotes processados
-vector<RelationInfomacoes> externalRelations; // Relações externas identificadas
+vector<relacoesationInfomacoes> externalrelacoesations; // relacoesações externas identificadas
 vector<DatatypeInformacoes> datatypes;        // Tipos de dados definidos
 vector<EnumInformacoes> enums;                // Enumerações mapeadas
 
@@ -138,7 +138,7 @@ vector<Erro> errorLog;            // Log central de erros
 /* ========================================================================== */
 
 // Mapas para reconhecimento de tokens
-unordered_map<string, int> mapRelationestereotipos;  // Estereótipos de relação
+unordered_map<string, int> maprelacoesationestereotipos;  // Estereótipos de relacoesação
 unordered_map<string, int> mapDatatypes;            // Tipos de dados nativos
 unordered_map<string, int> mapReservedWords;        // Palavras reservadas
 unordered_map<string, int> mapClassestereotipos;     // Estereótipos de classe
@@ -153,8 +153,8 @@ void yyerror(const char *s);           // Tratamento de erros sintáticos
 
 // Funções do sistema
 void init_maps();                      // Inicializa tabelas de símbolos
-void printSynthesisReport();           // Gera relatório de síntese
-void printErrorReport();               // Gera relatório de erros
+void printSynthesisReport();           // Gera relacoesatório de síntese
+void printErrorReport();               // Gera relacoesatório de erros
 %}
 %define parse.error verbose
 %union {
@@ -167,17 +167,17 @@ void printErrorReport();               // Gera relatório de erros
 
 /* Tokens sem valor */
 %token HAS SPECIALIZES OF WHERE FUNCTIONAL_COMPLEXES PACKAGE SPECIFICS GENERAL COMPLETE DISJOINT GENSET IMPORT
-%token DATATYPE RELATION ENUM
+%token DATATYPE relacoesATION ENUM
 
 /* Tokens COM valor */
-%token <sval> REL_STEREO NUM NATIVE_TYPE MATERIAL ID CLASS_STEREO CARDINALITY
+%token <sval> relacoes_STEREO NUM NATIVE_TYPE MATERIAL ID CLASS_STEREO CARDINALITY
 
 /* Símbolos especiais - POR type */
 %token LBRACE RBRACE LBRACKET RBRACKET COLON DOT COMMA     /* Chaves e colchetes */
 %token ARROW_ASSOC ARROW_AGG ARROW_COMP ARROW_AGG_EXISTENTIAL  /* Setas */
 
 /* types de não-terminais */
-%type <sval> cardinalidade_opt opt_rel_stereo operador_relacao tipo_referencia opt_material pacote_cabecalho corpo_relacao_externa
+%type <sval> cardinalidade_opt opt_relacoes_stereo operador_relacoes tipo_referencia opt_material pacote_cabecalho corpo_relacoesacao_externa
 
 /* Precedências */
 %nonassoc EMPTY_CARD
@@ -200,7 +200,7 @@ lista_pacotes:
     pacote
     | lista_pacotes pacote
     ;
-    
+
 pacote:
     pacote_cabecalho
     {
@@ -240,11 +240,119 @@ declaracao:
     | datatype_decl
     | enum_decl
     | genset_decl
-    | relacao_esterna_decl
+    | relacoesacao_esterna_decl
     | class_subkind_decl
     ;
 
 classe_decl:
+cabecalho_classe opt_especializacao opt_relacoes_lista_sintaxe opt_corpo_classe
+    ;
+
+cabecalho_classe:
+    CLASS_STEREO ID
+    {
+        ClassesInformacoes newClass;
+        newClass.nome = string($2);
+        newClass.estereotipo = string($1);
+        pacoteAtual->classes.push_back(newClass);   
+        currentClass = &pacoteAtual->classes.back();
+    }
+    ;
+opt_especializacao:
+    | SPECIALIZES lista_pais
+    ;
+
+lista_pais:
+    ID 
+    {
+        if (!pacoteAtual->classes.empty())
+             pacoteAtual->classes.back().parents.push_back(string($1));
+    }
+    | lista_pais COMMA ID
+    {
+        if (!pacoteAtual->classes.empty()) 
+             pacoteAtual->classes.back().parents.push_back(string($3));
+    }
+    ;
+
+opt_relacoesation_list_syntax:
+    | relacoesation_list
+    ;
+
+relacoesation_list:
+    relacoes_STEREO ID
+    | relacoesation_list COMMA ID
+    ;
+
+opt_corpo_classe:
+    | LBRACE corpo_classe RBRACE
+    ;
+
+corpo_classe:
+    | lista_membros
+    ;
+
+lista_membros:
+    membro_classe
+    | lista_membros membro_classe
+    | lista_membros error { yyerrok; }
+    ;
+
+membro_classe:
+    atributo
+    | relacoes_interna
+    ;
+
+
+atributo:
+    ID COLON tipo_referencia cardinalidade_opt
+    { 
+        if (currentClass != nullptr) {
+            currentClass->attributes.push_back(string($1) + " : " + string($3));
+        }
+    }
+    ;
+
+relacoes_interna:
+    opt_relacoes_stereo operador_relacoes ID operador_relacoes cardinalidade_opt ID
+    {
+        if (currentClass != nullptr) {
+            relacoesInternas relacoes;
+            relacoes.estereotipo = ($1) ? string($1) : ""; 
+            relacoes.nome = string($3);
+            relacoes.sourceCardinality = "";
+            relacoes.targetCardinality = ($5) ? string($5) : "";
+            relacoes.targetClass = string($6);
+            currentClass->internalrelacoesations.push_back(relacoes);
+        }
+    }
+  |
+    opt_relacoes_stereo CARDINALITY operador_relacoes opt_id CARDINALITY ID
+    {
+        if(currentClass != nullptr) {
+            relacoesInternas relacoes;
+            relacoes.estereotipo = ($1) ? string($1) : "";
+            relacoes.nome = "";
+            relacoes.sourceCardinality = ($2) ? string($2) : "";
+            relacoes.targetCardinality = ($5) ? string($5) : "";
+            relacoes.targetClass = string($6);
+            currentClass->internalrelacoesations.push_back(relacoes);
+        }
+    }
+  ;
+
+operador_relacoes:
+    ARROW_AGG_EXISTENTIAL { $$ = (char*)"<o>--"; }
+    | ARROW_AGG { $$ = (char*)"<>--"; }
+    | ARROW_COMP { $$ = (char*)"<*>--"; }
+    | ARROW_ASSOC { $$ = (char*)"--";  }
+    ;
+
+
+tipo_referencia:
+    NATIVE_TYPE { $$ = $1; }
+    | ID { $$ = $1; }
+    ;
 
 datatype_decl:
 
@@ -252,6 +360,6 @@ enum_decl:
 
 genset_decl:
 
-relacao_esterna_decl:
+relacoesacao_esterna_decl:
 
 class_subkind_decl:
