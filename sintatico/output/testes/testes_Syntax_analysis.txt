@@ -1,0 +1,54 @@
+
+======================================================
+               RELATÓRIO DE SÍNTESE
+======================================================
+
+[ESTATÍSTICAS GERAIS]
+Pacotes: 2 (CarRental, CarOwnership)
+Classes: 21
+Relações Internas: 5
+Relações Externas: 0
+Gensets: 2
+Enums: 0
+Datatypes: 6
+
+[DETALHAMENTO POR PACOTE]
+
+CarRental
+├─ Person [kind]
+├─ Employee [role] (Herda de: Person)
+├─ ResponsibleEmployee [role] (Herda de: Employee)
+├─ DeceasedPerson [phase] (Herda de: Person)
+├─ LivingPerson [phase] (Herda de: Person)
+├─ Child [phase] (Herda de: LivingPerson)
+├─ Teenager [phase] (Herda de: LivingPerson)
+├─ Adult [phase] (Herda de: LivingPerson)
+├─ Customer [roleMixin]
+├─ PersonalCustomer [role] (Herda de: Customer, Person)
+├─ Organization [kind]
+├─ CorporateCustomer [role] (Herda de: Organization)
+├─ Car [kind]
+├─ AvailableCar [phase] (Herda de: Car)
+├─ UnderMaintenanceCar [phase] (Herda de: Car)
+├─ RentalCar [role] (Herda de: AvailableCar)
+└─ CarRental [relator]
+   ├─ Internas:
+   │  > (@mediation) involvesRental [1] --> RentalCar
+   │  > involvesMediator [1] --> ResponsibleEmployee
+   │  > (@mediation) involvesCustomer [1] --> Customer
+   └─ Gensets:
+       * AgePhase
+         - General: LivingPerson
+         - Specifics: Child, Teenager, Adult
+       * LifeStatus
+         - General: Person
+         - Specifics: DeceasedPerson, LivingPerson
+
+CarOwnership
+├─ Organization [kind]
+├─ CarAgency [subkind] (Herda de: Organization)
+├─ Car [kind]
+└─ CarOwnership [relator]
+   ├─ Internas:
+   │  > (@mediation) involvesOwner [1] --> CarAgency
+   │  > (@mediation) involvesProperty [1] --> Car

@@ -1,7 +1,10 @@
 {
     "files.associations": {
-    "*.h": "cpp",
-    "*.c": "cpp"
-}
-
+        "deque": "c",
+        "string": "c",
+        "vector": "c",
+        "format": "c",
+        "*.h": "c",
+        "ostream": "cpp"
+    }
 }

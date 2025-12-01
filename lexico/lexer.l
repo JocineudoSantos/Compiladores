@@ -52,13 +52,20 @@ unordered_set<string> types;
 int line_number = 1;
 int column_number = 1;
 
-void update_position(const char* yytext) {
+// Atualiza a posição baseada no token e retorna a coluna inicial
+int update_position(const char* yytext) {
+    int start_column = column_number; // coluna onde o token começa
+
     for (const char* p = yytext; *p; ++p) {
         if (*p == '\n') {
             line_number++;
             column_number = 1;
+        } else {
+            column_number++;
         }
     }
+
+    return start_column; // retorna a coluna inicial do token
 }
 
 bool is_metaattribute(const char* text) {
@@ -190,76 +197,68 @@ CARDINALITY    "["{DIGIT}+"]"
 
 %%
 {CARDINALITY} {
-    update_position(yytext);
-    cout << "\n" << "CARDINALITY " << yytext << " " << line_number << " " << column_number;
-    column_number++;
+    int token_column = update_position(yytext);
+    cout << "CARDINALITY " << yytext << " " << line_number << " " << token_column  << "\n";
 }
 {DATATYPE_NAME} {
-    update_position(yytext);
-    cout << "\n" << "DATATYPE_NAME " << yytext << " " << line_number << " " << column_number;
-    column_number++;
+    int token_column = update_position(yytext);
+    cout << "DATATYPE_NAME " << yytext << " " << line_number << " " << token_column << "\n";
 }
 
 {RELATION_NAME} {
-    update_position(yytext);
+    int token_column = update_position(yytext);
     if(is_relation(yytext)) {
-        cout << "\n" << "RELATION_STEREOTYPE " << yytext << " " << line_number << " " << column_number;
+        cout << "RELATION_STEREOTYPE " << yytext << " " << line_number << " " << token_column << "\n";
         relation_stereotypes.insert(yytext);
     } else if (is_reservedword(yytext)) {
-        cout << "\n" << "RESERVED_WORD " << yytext << " " << line_number << " " << column_number;
+        cout << "RESERVED_WORD " << yytext << " " << line_number << " " << token_column << "\n";
         reserved_words.insert(yytext);
     } else if (is_metaattribute(yytext)) {
-        cout << "\n" << "METAATTRIBUTE " << yytext << " " << line_number << " " << column_number;
+        cout << "METAATTRIBUTE " << yytext << " " << line_number << " " << token_column << "\n";
     } else if (is_type(yytext)) {
-        cout << "\n" << "TYPE " << yytext << " " << line_number << " " << column_number;
+        cout << "TYPE " << yytext << " " << line_number << " " << token_column << "\n";
     } else if(is_classs(yytext)) {
-        cout << "\n" << "CLASS_STEREOTYPE " << yytext << " " << line_number << " " << column_number;
+        cout  << "CLASS_STEREOTYPE " << yytext << " " << line_number << " " << token_column << "\n";
         class_stereotypes.insert(yytext);
     } else {
-        cout << "\n" << "RELATION_NAME " << yytext << " " << line_number << " " << column_number;
+        cout << "RELATION_NAME " << yytext << " " << line_number << " " << token_column << "\n";
         relations.insert(yytext);
     }
-    column_number++;
 }
 
 {INSTANCE_NAME} {
-    update_position(yytext);
-    cout << "\n" << "INSTANCE_NAME " << yytext << " " << line_number << " " << column_number;
-    column_number++;
+    int token_column = update_position(yytext);
+    cout << "INSTANCE_NAME " << yytext << " " << line_number << " " << token_column << "\n";
 }
 
 {CLASS_NAME} {
-    update_position(yytext);
-    cout << "\n" << "CLASS_NAME " << yytext << " " << line_number << " " << column_number;
+    int token_column = update_position(yytext);
+    cout << "CLASS_NAME " << yytext << " " << line_number << " " << token_column << "\n";
     classes.insert(yytext);
-    column_number++;    
 }
 
 {NUMBER} {
-    update_position(yytext);
-    cout << "\n" << "NUMBER " << yytext << " " << line_number << " " << column_number;
-    column_number++;    
+    int token_column = update_position(yytext);
+    cout << "NUMBER " << yytext << " " << line_number << " " << token_column << "\n"; 
 }
 
 {STRING} {
-   update_position(yytext);
-    cout << "\n" << "STRING " << yytext << " " << line_number << " " << column_number;
-    column_number++;    
+    int token_column = update_position(yytext);
+    cout << "STRING " << yytext << " " << line_number << " " << token_column << "\n";
 }
 
-"{"|"}"|"("|")"|"["|"]"|".."|"<>--"|"--<>"|"*"|"@"|":"|"--" {
-    update_position(yytext);
-    cout << "\n" << "SPECIAL_SYMBOL " << yytext << " " << line_number << " " << column_number;
-    column_number++;   
+"{"|"}"|"("|")"|"["|"]"|".."|"<>--"|"--<>"|"*"|"@"|":"|"--"|"," {
+    int token_column = update_position(yytext);
+    cout << "SPECIAL_SYMBOL " << yytext << " " << line_number << " " << token_column << "\n";  
 }
 
 {ID} {
-    update_position(yytext);
-    cout << "\n INDENTIFIER " << yytext << " " << line_number << " " << column_number;
-    column_number++;
+    int token_column = update_position(yytext);
+    cout << "INDENTIFIER " << yytext << " " << line_number << " " << token_column << "\n";
 }
 
 [ \t\r]+ {
+    update_position(yytext);
     // Ignora espaços em branco
 }
 
@@ -268,8 +267,8 @@ CARDINALITY    "["{DIGIT}+"]"
 }
 
 . {
-    update_position(yytext);
-    cout << "\n" << "UNKNOWN " << yytext << " " << line_number << " " << column_number;
+    int token_column = update_position(yytext);
+    cout << "UNKNOWN " << yytext << " " << line_number << " " << token_column << "\n";
 }
 
 %%

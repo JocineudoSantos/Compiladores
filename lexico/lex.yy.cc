@@ -339,16 +339,16 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    2,    1,    4,    1,    1,    1,    1,    1,    5,
-        6,    7,    1,    1,    8,    9,    1,   10,   10,   10,
-       10,   10,   10,   10,   10,   10,   10,   11,    1,   12,
-        1,   13,    1,   14,   15,   15,   15,   16,   15,   15,
-       15,   15,   15,   15,   15,   15,   15,   15,   15,   15,
-       15,   15,   15,   17,   15,   15,   15,   15,   15,   15,
-       18,   19,   20,    1,   21,    1,   22,   23,   23,   23,
+        6,    7,    1,    8,    9,   10,    1,   11,   11,   11,
+       11,   11,   11,   11,   11,   11,   11,   12,    1,   13,
+        1,   14,    1,   15,   16,   16,   16,   17,   16,   16,
+       16,   16,   16,   16,   16,   16,   16,   16,   16,   16,
+       16,   16,   16,   18,   16,   16,   16,   16,   16,   16,
+       19,   20,   21,    1,   22,    1,   23,   24,   24,   24,
 
-       24,   23,   23,   23,   23,   23,   23,   23,   23,   23,
-       23,   25,   23,   23,   23,   26,   23,   23,   23,   23,
-       27,   23,   28,    1,   29,    1,    1,    1,    1,    1,
+       25,   24,   24,   24,   24,   24,   24,   24,   24,   24,
+       24,   26,   24,   24,   24,   27,   24,   24,   24,   24,
+       28,   24,   29,    1,   30,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -365,22 +365,22 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[30] =
+static const YY_CHAR yy_meta[31] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
-        1,    1,    1,    1,    2,    2,    2,    1,    1,    1,
-        2,    2,    2,    2,    2,    2,    2,    1,    1
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        2,    1,    1,    1,    1,    2,    2,    2,    1,    1,
+        1,    2,    2,    2,    2,    2,    2,    2,    1,    1
     } ;
 
 static const flex_int16_t yy_base[62] =
     {   0,
-        0,    0,   97,   98,   94,   98,   26,   98,   87,   85,
-       22,   80,   23,   25,   82,    0,   27,   89,   30,   98,
-       87,   77,   98,   78,   41,   79,   76,   63,    0,   74,
-       14,   32,    0,   73,   43,   60,   71,   67,   69,   70,
-       55,   98,   50,   38,   53,   34,   57,   32,   46,   41,
-       47,   49,   46,    0,   98,   65,   67,   66,   60,   56,
-       36
+        0,    0,   98,   99,   95,   99,   27,   99,   87,   85,
+       22,   80,   23,   26,   82,    0,   24,   90,   32,   99,
+       88,   77,   99,   78,   28,   79,   76,   63,    0,   74,
+       27,   40,    0,   73,   42,   60,   71,   67,   69,   70,
+       55,   99,   50,   37,   53,   34,   57,   40,   46,   19,
+       47,   49,   46,    0,   99,   66,   68,   67,   63,   56,
+       54
     } ;
 
 static const flex_int16_t yy_def[62] =
@@ -394,40 +394,40 @@ static const flex_int16_t yy_def[62] =
        55
     } ;
 
-static const flex_int16_t yy_nxt[128] =
+static const flex_int16_t yy_nxt[130] =
     {   0,
-        4,    5,    6,    7,    8,    8,    8,    9,   10,   11,
-        8,   12,    4,    8,   13,   14,   13,   15,    4,    8,
-       16,   17,   17,   17,   17,   17,   17,    8,    8,   20,
-       24,   25,   27,   20,   27,   28,   34,   37,   29,   41,
-       29,   32,   36,   30,   21,   30,   31,   37,   21,   24,
-       25,   42,   34,   28,   46,   28,   50,   30,   36,   28,
-       48,   35,   28,   37,   52,   19,   19,   33,   28,   54,
-       28,   53,   51,   49,   47,   45,   44,   23,   39,   23,
-       34,   43,   34,   27,   28,   27,   40,   39,   38,   55,
-       18,   32,   26,   23,   22,   18,   55,    3,   55,   55,
+        4,    5,    6,    7,    8,    8,    8,    8,    9,   10,
+       11,    8,   12,    4,    8,   13,   14,   13,   15,    4,
+        8,   16,   17,   17,   17,   17,   17,   17,    8,    8,
+       20,   24,   25,   27,   34,   20,   27,   24,   25,   29,
+       36,   28,   29,   52,   30,   37,   21,   30,   31,   28,
+       32,   21,   34,   41,   46,   37,   28,   30,   36,   28,
+       42,   48,   28,   37,   35,   50,   19,   19,   33,   28,
+       54,   28,   53,   51,   49,   47,   45,   44,   23,   39,
+       23,   34,   43,   34,   27,   28,   27,   40,   39,   38,
+       55,   18,   32,   26,   23,   22,   18,   55,    3,   55,
 
        55,   55,   55,   55,   55,   55,   55,   55,   55,   55,
        55,   55,   55,   55,   55,   55,   55,   55,   55,   55,
-       55,   55,   55,   55,   55,   55,   55
+       55,   55,   55,   55,   55,   55,   55,   55,   55
     } ;
 
-static const flex_int16_t yy_chk[128] =
+static const flex_int16_t yy_chk[130] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    7,
-       11,   11,   13,   19,   14,   31,   17,   61,   13,   31,
-       14,   32,   17,   13,    7,   14,   14,   17,   19,   25,
-       25,   32,   35,   48,   44,   46,   48,   60,   35,   44,
-       46,   59,   50,   35,   50,   56,   56,   58,   57,   53,
-       52,   51,   49,   47,   45,   43,   41,   40,   39,   38,
-       37,   36,   34,   30,   28,   27,   26,   24,   22,   21,
-       18,   15,   12,   10,    9,    5,    3,   55,   55,   55,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        7,   11,   11,   13,   17,   19,   14,   25,   25,   13,
+       17,   50,   14,   50,   13,   17,    7,   14,   14,   31,
+       32,   19,   35,   31,   44,   61,   46,   60,   35,   44,
+       32,   46,   48,   35,   59,   48,   56,   56,   58,   57,
+       53,   52,   51,   49,   47,   45,   43,   41,   40,   39,
+       38,   37,   36,   34,   30,   28,   27,   26,   24,   22,
+       21,   18,   15,   12,   10,    9,    5,    3,   55,   55,
 
        55,   55,   55,   55,   55,   55,   55,   55,   55,   55,
        55,   55,   55,   55,   55,   55,   55,   55,   55,   55,
-       55,   55,   55,   55,   55,   55,   55
+       55,   55,   55,   55,   55,   55,   55,   55,   55
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -490,13 +490,20 @@ unordered_set<string> types;
 int line_number = 1;
 int column_number = 1;
 
-void update_position(const char* yytext) {
+// Atualiza a posição baseada no token e retorna a coluna inicial
+int update_position(const char* yytext) {
+    int start_column = column_number; // coluna onde o token começa
+
     for (const char* p = yytext; *p; ++p) {
         if (*p == '\n') {
             line_number++;
             column_number = 1;
+        } else {
+            column_number++;
         }
     }
+
+    return start_column; // retorna a coluna inicial do token
 }
 
 bool is_metaattribute(const char* text) {
@@ -607,8 +614,8 @@ extern "C" {
     }
 }
 
-#line 611 "lexico/lex.yy.cc"
-#line 612 "lexico/lex.yy.cc"
+#line 618 "lexico/lex.yy.cc"
+#line 619 "lexico/lex.yy.cc"
 
 #define INITIAL 0
 
@@ -740,9 +747,9 @@ YY_DECL
 		}
 
 	{
-#line 191 "lexico/lexer.l"
+#line 198 "lexico/lexer.l"
 
-#line 746 "lexico/lex.yy.cc"
+#line 753 "lexico/lex.yy.cc"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -775,7 +782,7 @@ yy_match:
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 98 );
+		while ( yy_base[yy_current_state] != 99 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -801,132 +808,124 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 192 "lexico/lexer.l"
+#line 199 "lexico/lexer.l"
 {
-    update_position(yytext);
-    cout << "\n" << "CARDINALITY " << yytext << " " << line_number << " " << column_number;
-    column_number++;
+    int token_column = update_position(yytext);
+    cout << "CARDINALITY " << yytext << " " << line_number << " " << token_column  << "\n";
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 197 "lexico/lexer.l"
+#line 203 "lexico/lexer.l"
 {
-    update_position(yytext);
-    cout << "\n" << "DATATYPE_NAME " << yytext << " " << line_number << " " << column_number;
-    column_number++;
+    int token_column = update_position(yytext);
+    cout << "DATATYPE_NAME " << yytext << " " << line_number << " " << token_column << "\n";
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 203 "lexico/lexer.l"
+#line 208 "lexico/lexer.l"
 {
-    update_position(yytext);
+    int token_column = update_position(yytext);
     if(is_relation(yytext)) {
-        cout << "\n" << "RELATION_STEREOTYPE " << yytext << " " << line_number << " " << column_number;
+        cout << "RELATION_STEREOTYPE " << yytext << " " << line_number << " " << token_column << "\n";
         relation_stereotypes.insert(yytext);
     } else if (is_reservedword(yytext)) {
-        cout << "\n" << "RESERVED_WORD " << yytext << " " << line_number << " " << column_number;
+        cout << "RESERVED_WORD " << yytext << " " << line_number << " " << token_column << "\n";
         reserved_words.insert(yytext);
     } else if (is_metaattribute(yytext)) {
-        cout << "\n" << "METAATTRIBUTE " << yytext << " " << line_number << " " << column_number;
+        cout << "METAATTRIBUTE " << yytext << " " << line_number << " " << token_column << "\n";
     } else if (is_type(yytext)) {
-        cout << "\n" << "TYPE " << yytext << " " << line_number << " " << column_number;
+        cout << "TYPE " << yytext << " " << line_number << " " << token_column << "\n";
     } else if(is_classs(yytext)) {
-        cout << "\n" << "CLASS_STEREOTYPE " << yytext << " " << line_number << " " << column_number;
+        cout  << "CLASS_STEREOTYPE " << yytext << " " << line_number << " " << token_column << "\n";
         class_stereotypes.insert(yytext);
     } else {
-        cout << "\n" << "RELATION_NAME " << yytext << " " << line_number << " " << column_number;
+        cout << "RELATION_NAME " << yytext << " " << line_number << " " << token_column << "\n";
         relations.insert(yytext);
     }
-    column_number++;
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 225 "lexico/lexer.l"
+#line 229 "lexico/lexer.l"
 {
-    update_position(yytext);
-    cout << "\n" << "INSTANCE_NAME " << yytext << " " << line_number << " " << column_number;
-    column_number++;
+    int token_column = update_position(yytext);
+    cout << "INSTANCE_NAME " << yytext << " " << line_number << " " << token_column << "\n";
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 231 "lexico/lexer.l"
+#line 234 "lexico/lexer.l"
 {
-    update_position(yytext);
-    cout << "\n" << "CLASS_NAME " << yytext << " " << line_number << " " << column_number;
+    int token_column = update_position(yytext);
+    cout << "CLASS_NAME " << yytext << " " << line_number << " " << token_column << "\n";
     classes.insert(yytext);
-    column_number++;    
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 238 "lexico/lexer.l"
+#line 240 "lexico/lexer.l"
 {
-    update_position(yytext);
-    cout << "\n" << "NUMBER " << yytext << " " << line_number << " " << column_number;
-    column_number++;    
+    int token_column = update_position(yytext);
+    cout << "NUMBER " << yytext << " " << line_number << " " << token_column << "\n"; 
 }
 	YY_BREAK
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 244 "lexico/lexer.l"
+#line 245 "lexico/lexer.l"
 {
-   update_position(yytext);
-    cout << "\n" << "STRING " << yytext << " " << line_number << " " << column_number;
-    column_number++;    
+    int token_column = update_position(yytext);
+    cout << "STRING " << yytext << " " << line_number << " " << token_column << "\n";
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 250 "lexico/lexer.l"
 {
-    update_position(yytext);
-    cout << "\n" << "SPECIAL_SYMBOL " << yytext << " " << line_number << " " << column_number;
-    column_number++;   
+    int token_column = update_position(yytext);
+    cout << "SPECIAL_SYMBOL " << yytext << " " << line_number << " " << token_column << "\n";  
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 256 "lexico/lexer.l"
+#line 255 "lexico/lexer.l"
 {
-    update_position(yytext);
-    cout << "\n INDENTIFIER " << yytext << " " << line_number << " " << column_number;
-    column_number++;
+    int token_column = update_position(yytext);
+    cout << "INDENTIFIER " << yytext << " " << line_number << " " << token_column << "\n";
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 262 "lexico/lexer.l"
+#line 260 "lexico/lexer.l"
 {
+    update_position(yytext);
     // Ignora espaços em branco
 }
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 266 "lexico/lexer.l"
+#line 265 "lexico/lexer.l"
 {
     update_position(yytext);
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 270 "lexico/lexer.l"
+#line 269 "lexico/lexer.l"
 {
-    update_position(yytext);
-    cout << "\n" << "UNKNOWN " << yytext << " " << line_number << " " << column_number;
+    int token_column = update_position(yytext);
+    cout << "UNKNOWN " << yytext << " " << line_number << " " << token_column << "\n";
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 275 "lexico/lexer.l"
+#line 274 "lexico/lexer.l"
 ECHO;
 	YY_BREAK
-#line 930 "lexico/lex.yy.cc"
+#line 929 "lexico/lex.yy.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1889,7 +1888,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 275 "lexico/lexer.l"
+#line 274 "lexico/lexer.l"
 
 
 // Função para ser chamada da main após a análise

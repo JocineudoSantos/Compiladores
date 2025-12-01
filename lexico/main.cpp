@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include "FlexLexer.h"
+#include <filesystem>
+namespace fs = std::filesystem;
 using namespace std;
 
 void finalize_lexer(const string& filename);
@@ -19,11 +21,10 @@ int main(int argc, char* argv[]) {
 
     // Extrai apenas o nome do arquivo e remove o caminho
     string base = argv[1];
-    size_t pos = base.find_last_of("/\\");
-    string filename = (pos == string::npos ? base : base.substr(pos + 1));
-
+    fs::path p(base);
+    std::string nameWithoutExt = p.stem().string(); // retorna o nome sem a extensão
     // Força saída dentro da pasta do módulo
-    string saida = "lexico/" + filename + ".tok";
+    string saida = "sintatico/testes/" + nameWithoutExt + "_tokens.txt";
 
     ofstream out(saida);
     if (!out) {

@@ -1,16 +1,7 @@
-{
-/* ========================================================================== */
-/* INCLUDES DO SISTEMA                                                        */
-/* ========================================================================== */
-
-// Bibliotecas padrão C
+%{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <cstring>   // strcmp, strdup
-#include <cstdlib>   // strdup no GCC/Clang
-
-// Bibliotecas padrão C++
 #include <iostream>
 #include <string>
 #include <vector>
@@ -21,270 +12,239 @@
 using namespace std;
 
 /* ========================================================================== */
-/* DEFINIÇÕES DE CORES PARA TERMINAL                                          */
+/* ESTRUTURAS DE DADOS                                                        */
 /* ========================================================================== */
 
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_BLUE    "\x1b[34m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
-
-/* ESTRUTURAS DE DADOS PRINCIPAIS */
-
-// Informações de Enumeração
 struct EnumInformacoes {
-    string nome;
-    vector<string> literals;  // Valores do Enum
+    string name;
+    vector<string> literals;
 };
 
-// Informações de relacoesação Interna (dentro de classes)
-struct relacoesacoesInternas {
-    string nome;
-    string estereotipo;
+struct InternalRelationInformacoes {
+    string stereotype;
+    string name;
     string sourceCardinality;
     string targetCardinality;
     string targetClass;
 };
 
-// Informações de relacoesação Geral
-struct relacoesationInfomacoes {
-    string estereotipo;
-    string tipo; 
-    string detalhes; 
+struct RelationInformacoes {
+    string stereotype;
+    string type; 
+    string details; 
 };
 
-// Informações de Classe
-struct ClassesInformacoes {
-    string nome;
-    string estereotipo;
+struct ClassInfo {
+    string name;
+    string stereotype;
     vector<string> parents;
     vector<string> attributes;
-    vector<relacoesacoesInternas> internalrelacoesations;
+    vector<InternalRelationInformacoes> internalRelations;
 };
 
-// Informações de Conjunto de Generalização
 struct GensetInfo {
-    string nome;
+    string name;
     string general;
     vector<string> specifics;
 };
 
-// Informações de Pacote (container principal)
 struct PacoteInformacoes {
-    string nome;
-    vector<ClassesInformacoes> classes;
+    string name;
+    vector<ClassInfo> classes;
     vector<GensetInfo> gensets;
     vector<EnumInformacoes> enums;
-    vector<relacoesationInfomacoes> externalrelacoesations;
+    vector<RelationInformacoes> relacoesExternas;
 };
 
-// Informações de Tipo de Dado
 struct DatatypeInformacoes {
-    string nome;
+    string name;
     string baseType; 
 };
 
-// Informações de Erro para relacoesatório
-struct Erro {
+struct ErrorInfo {
     int line;
     int col;
-    string message;
-    string suggestion;
+    string mensagem;
+    string sugestao;
 };
 
-/* ========================================================================== */
-/* VARIÁVEIS GLOBAIS - CONTROLE DE EXECUÇÃO                                   */
-/* ========================================================================== */    
+// Ponteiros atuais
+PacoteInformacoes* pacoteAtual = nullptr;
+ClassInfo* classeAtual = nullptr;
 
-// Ponteiros de contexto atual
-PacoteInformacoes* pacoteAtual = nullptr;    // Pacote sendo processado
-ClassesInformacoes* currentClass = nullptr;     // Classe sendo processada
+// Funções auxiliares
+int yylex(void);
+void yyerror(const char *s);
+void mapa();
+void imprimirRelatorio();
+void imprimirErro();
 
-// Sistema de arquivos e relacoesatórios
-ofstream reportFile;                   // Arquivo de relacoesatório de saída
-extern FILE *tokenFile;                // Arquivo de tokens (externo)
-extern std::string currentFileName;    // Nome do arquivo atual
 
-/* ========================================================================== */
-/* VARIÁVEIS GLOBAIS - ANÁLISE LÉXICA                                         */
-/* ========================================================================== */
+// Estruturas principais
+vector<PacoteInformacoes> pacotes;
+vector<RelationInformacoes> relacoesExternas;
+vector<DatatypeInformacoes> Datatypes;
+vector<EnumInformacoes> enums;
 
-// Estado do analisador léxico
-char typeStr[50];                      // Tipo do token atual
-char lexeme[100];                      // Lexema do token atual  
-int lineNumber;                        // Número da linha atual
-int columnNumber;                      // Número da coluna atual
+// Variáveis temporárias
+vector<string> tempIdentifier;
+vector<string> tempEnum;
 
-/* ========================================================================== */
-/* VARIÁVEIS GLOBAIS - REPOSITÓRIOS DE DADOS                                  */
-/* ========================================================================== */
+// Log de erros
+vector<ErrorInfo> errorLog;
 
-// Estruturas principais de armazenamento
-vector<PacoteInformacoes> pacotes;           // Todos os pacotes processados
-vector<relacoesationInfomacoes> externalrelacoesations; // relacoesações externas identificadas
-vector<DatatypeInformacoes> datatypes;        // Tipos de dados definidos
-vector<EnumInformacoes> enums;                // Enumerações mapeadas
+// Mapas de consulta rápida
+unordered_map<string, int> relationStereotypes;
+unordered_map<string, int> reservedDatatypes;
+unordered_map<string, int> reservedWords;
+unordered_map<string, int> classStereotype;
 
-// Buffers temporários para construção
-vector<string> tempSpecifics;          // Lista temporária de específicos
-vector<string> tempEnumLiterals;       // Lista temporária de literais enum
+// Variáveis de controle
+char type[100], lexeme[100];
+int lineNumber = 0, columnNumber = 0;
 
-// Sistema de registro de erros
-vector<Erro> errorLog;            // Log central de erros
+// Arquivos e fluxos de entrada/saída
+ofstream relatorioFile;
+extern FILE *tokenFile;
+extern string currentFileName;
 
-/* ========================================================================== */
-/* VARIÁVEIS GLOBAIS - TABELAS DE SÍMBOLOS                                    */
-/* ========================================================================== */
-
-// Mapas para reconhecimento de tokens
-unordered_map<string, int> maprelacoesationestereotipos;  // Estereótipos de relacoesação
-unordered_map<string, int> mapDatatypes;            // Tipos de dados nativos
-unordered_map<string, int> mapReservedWords;        // Palavras reservadas
-unordered_map<string, int> mapClassestereotipos;     // Estereótipos de classe
-
-/* ========================================================================== */
-/* PROTÓTIPOS DE FUNÇÕES                                                      */
-/* ========================================================================== */
-
-// Funções do analisador sintático (Bison)
-int yylex(void);                       // Analisador léxico
-void yyerror(const char *s);           // Tratamento de erros sintáticos
-
-// Funções do sistema
-void init_maps();                      // Inicializa tabelas de símbolos
-void printSynthesisReport();           // Gera relacoesatório de síntese
-void printErrorReport();               // Gera relacoesatório de erros
-%}
-%define parse.error verbose
-%union {
-    char *sval;
+/* Funções auxiliares */
+void adicionarAtributo(ClassInfo* classes, const string& nome, const string& tipo) {
+    if(classes) classes->attributes.push_back(nome + " : " + tipo);
+}
+void adicionarParente(ClassInfo* classes, const string& pai) {
+    if(classes) classes->parents.push_back(pai);
+}
+string joinOptional(char* s) {
+    return s ? string(s) : "";
 }
 
-/* ========================================================================== */
-/* TOKENS                                                                     */
-/* ========================================================================== */
+%}
 
-/* Tokens sem valor */
-%token HAS SPECIALIZES OF WHERE FUNCTIONAL_COMPLEXES PACKAGE SPECIFICS GENERAL COMPLETE DISJOINT GENSET IMPORT
-%token DATATYPE relacoesATION ENUM
+%define parse.error verbose
 
-/* Tokens COM valor */
-%token <sval> relacoes_STEREO NUM NATIVE_TYPE MATERIAL ID CLASS_STEREO CARDINALITY
+%union {
+    char *strval;
+}
 
-/* Símbolos especiais - POR type */
-%token LBRACE RBRACE LBRACKET RBRACKET COLON DOT COMMA     /* Chaves e colchetes */
-%token ARROW_ASSOC ARROW_AGG ARROW_COMP ARROW_AGG_EXISTENTIAL  /* Setas */
+%token DISJOINT SPECIALIZES IMPORT COMPLETE FUNCTIONAL_COMPLEXES PACKAGE 
+    WHERE GENSET OF SPECIFICS LBRACE RBRACE LBRACKET RBRACKET COLON DOT COMMA
+    ARROW_COMPOSITION ARROW_ASSOCIATION ARROW_AGGREGATION
+    ARROW_AGGREGATION_EXISTENTIAL RELATION ENUM DATATYPE GENERAL
 
-/* types de não-terminais */
-%type <sval> cardinalidade_opt opt_relacoes_stereo operador_relacoes tipo_referencia opt_material pacote_cabecalho corpo_relacoesacao_externa
+%token <strval> HAS NATIVE_TYPE CLASS_STEREOTYPE MATERIAL RELATION_STEREOTYPE NUM ID CARDINALITY
 
-/* Precedências */
-%nonassoc EMPTY_CARD
-%nonassoc CARDINALITY
-%left ARROW_ASSOC ARROW_AGG ARROW_COMP
+%type <strval> operador_relacao optional_id pacote_cabecalho cardinalidade_optional
+    optional_relacao_stereotype campo tipo_referencia optional_material
+    corpo_relacao_externa
+
+%nonassoc CARDINALITY EMPTY
+
+%left ARROW_COMPOSITION ARROW_ASSOCIATION ARROW_AGGREGATION
 
 %%
 
 programa:
-    lista_imports lista_pacotes
+    lista_de_imports lista_de_pacotes
     ;
 
-lista_imports:
-    /* vazio */
-    | lista_imports IMPORT ID
-    | lista_imports error ID { yyerrok; } /* Ponto de recuperação por elemento */
+lista_de_imports:
+    | lista_de_imports IMPORT ID
+    | lista_de_imports error ID { yyerrok; yyclearin; } 
     ;
 
-lista_pacotes:
-    pacote
-    | lista_pacotes pacote
+lista_de_pacotes:
+      pacote
+    | lista_de_pacotes pacote
     ;
 
 pacote:
-    pacote_cabecalho
+    pacote_cabecalho optional_brace_block
     {
-        PacoteInformacoes
-        novoPacote;
-        novoPacote.nome = string($1);
-        pacotes.push_back(novoPacote);
-        pacoteAtual = &pacotes.back();
-    }
-    opt_brace_block
-    {
-        pacoteAtual = nullptr;
+        // pacoteAtual já foi atualizado antes do bloco
+        pacoteAtual = nullptr; // reset após terminar
     }
     ;
 
-opt_brace_block:
-    LBRACE conteudo_pacote RBRACE
+pacote_cabecalho:
+    PACKAGE ID
+    {
+        PacoteInformacoes novoPacote;
+        novoPacote.name = std::string($2);
+        pacotes.push_back(novoPacote);
+
+        // Atualiza ponteiro antes de processar o bloco
+        pacoteAtual = &pacotes.back();
+        $$ = $2;
+    }
+    | PACKAGE error
+    {
+        yyerrok;
+        PacoteInformacoes novoPacote;
+        novoPacote.name = "[semnome_" + std::to_string(lineNumber) + "]";
+        pacotes.push_back(novoPacote);
+        pacoteAtual = &pacotes.back();
+        $$ = nullptr;
+    }
+    ;
+
+optional_brace_block:
+      LBRACE conteudo_pacote RBRACE
     | conteudo_pacote
     ;
 
 conteudo_pacote:
     | conteudo_pacote declaracao
-    | conteudo_pacote error { yyerrok; } /* Ponto de recuperação por elemento */
-    ;
-
-pacote_cabecalho:
-    PACKAGE ID { $$ = $2; }
-    | PACKAGE error { yyerrok; } /* Ponto de recuperação por elemento */
-    {
-        yyerrok; 
-        $$ = NULL; 
-    }
+    | conteudo_pacote error { yyerrok; }
     ;
 
 declaracao:
-    classe_decl
-    | datatype_decl
-    | enum_decl
-    | genset_decl
-    | relacoesacao_esterna_decl
-    | class_subkind_decl
+      classe
+    | enum
+    | datatype
+    | relacao_externa
+    | genset
+    | classe_subkind
     ;
 
-classe_decl:
-cabecalho_classe opt_especializacao opt_relacoes_lista_sintaxe opt_corpo_classe
+// CLASSES
+classe:
+    cabecalho_classe optional_especializacao optional_relacoes_sintaxe_lista optional_corpo_classe
     ;
 
 cabecalho_classe:
-    CLASS_STEREO ID
+    CLASS_STEREOTYPE ID
     {
-        ClassesInformacoes newClass;
-        newClass.nome = string($2);
-        newClass.estereotipo = string($1);
-        pacoteAtual->classes.push_back(newClass);   
-        currentClass = &pacoteAtual->classes.back();
-    }
-    ;
-opt_especializacao:
-    | SPECIALIZES lista_pais
-    ;
-
-lista_pais:
-    ID 
-    {
-        if (!pacoteAtual->classes.empty())
-             pacoteAtual->classes.back().parents.push_back(string($1));
-    }
-    | lista_pais COMMA ID
-    {
-        if (!pacoteAtual->classes.empty()) 
-             pacoteAtual->classes.back().parents.push_back(string($3));
+        if(pacoteAtual){
+            pacoteAtual->classes.emplace_back();
+            ClassInfo &classes = pacoteAtual->classes.back();
+            classes.name = string($2);
+            classes.stereotype = string($1);
+            classeAtual = &classes;
+        }
+        free($1); free($2);
     }
     ;
 
-opt_relacoesation_list_syntax:
-    | relacoesation_list
+optional_especializacao:
+    | SPECIALIZES pai
     ;
 
-relacoesation_list:
-    relacoes_STEREO ID
-    | relacoesation_list COMMA ID
+pai:
+    ID { adicionarParente(classeAtual, string($1)); free($1); }
+    | pai COMMA ID { adicionarParente(classeAtual, string($3)); free($3); }
     ;
 
-opt_corpo_classe:
+optional_relacoes_sintaxe_lista:
+    | relacoes_lista
+    ;
+
+relacoes_lista:
+      RELATION_STEREOTYPE ID
+    | relacoes_lista COMMA ID
+    ;
+
+optional_corpo_classe:
     | LBRACE corpo_classe RBRACE
     ;
 
@@ -293,73 +253,477 @@ corpo_classe:
     ;
 
 lista_membros:
-    membro_classe
+      membro_classe
     | lista_membros membro_classe
     | lista_membros error { yyerrok; }
     ;
 
 membro_classe:
-    atributo
-    | relacoes_interna
+      atributo
+    | relacao_interna
     ;
-
 
 atributo:
-    ID COLON tipo_referencia cardinalidade_opt
-    { 
-        if (currentClass != nullptr) {
-            currentClass->attributes.push_back(string($1) + " : " + string($3));
-        }
+    ID COLON tipo_referencia cardinalidade_optional
+    {
+        adicionarAtributo(classeAtual, string($1), string($3));
+        free($1); free($3);
     }
     ;
-
-relacoes_interna:
-    opt_relacoes_stereo operador_relacoes ID operador_relacoes cardinalidade_opt ID
-    {
-        if (currentClass != nullptr) {
-            relacoesInternas relacoes;
-            relacoes.estereotipo = ($1) ? string($1) : ""; 
-            relacoes.nome = string($3);
-            relacoes.sourceCardinality = "";
-            relacoes.targetCardinality = ($5) ? string($5) : "";
-            relacoes.targetClass = string($6);
-            currentClass->internalrelacoesations.push_back(relacoes);
-        }
-    }
-  |
-    opt_relacoes_stereo CARDINALITY operador_relacoes opt_id CARDINALITY ID
-    {
-        if(currentClass != nullptr) {
-            relacoesInternas relacoes;
-            relacoes.estereotipo = ($1) ? string($1) : "";
-            relacoes.nome = "";
-            relacoes.sourceCardinality = ($2) ? string($2) : "";
-            relacoes.targetCardinality = ($5) ? string($5) : "";
-            relacoes.targetClass = string($6);
-            currentClass->internalrelacoesations.push_back(relacoes);
-        }
-    }
-  ;
-
-operador_relacoes:
-    ARROW_AGG_EXISTENTIAL { $$ = (char*)"<o>--"; }
-    | ARROW_AGG { $$ = (char*)"<>--"; }
-    | ARROW_COMP { $$ = (char*)"<*>--"; }
-    | ARROW_ASSOC { $$ = (char*)"--";  }
-    ;
-
 
 tipo_referencia:
-    NATIVE_TYPE { $$ = $1; }
+      NATIVE_TYPE { $$ = $1; }
     | ID { $$ = $1; }
     ;
 
-datatype_decl:
+// ENUMS
+enum:
+    ENUM ID LBRACE lista_enum RBRACE
+    {
+        if(pacoteAtual){
+            pacoteAtual->enums.push_back({string($2), tempEnum});
+        }
+        tempEnum.clear();
+        free($2);
+    }
+    ;
 
-enum_decl:
+lista_enum:
+      ID { tempEnum.push_back(string($1)); free($1); }
+    | lista_enum COMMA ID { tempEnum.push_back(string($3)); free($3); }
+    ;
 
-genset_decl:
+// DATATYPES
+datatype:
+      DATATYPE ID LBRACE lista_atributos RBRACE
+    {
+        Datatypes.push_back({string($2), "Complexo"});
+        free($2);
+    }
+    | DATATYPE ID
+    | DATATYPE NATIVE_TYPE
+    ;
 
-relacoesacao_esterna_decl:
+lista_atributos:
+      atributo
+    | lista_atributos atributo
+    ;
 
-class_subkind_decl:
+// RELAÇÕES
+relacao_interna:
+      optional_relacao_stereotype operador_relacao ID operador_relacao cardinalidade_optional ID
+    {
+        if(classeAtual)
+            classeAtual->internalRelations.push_back({joinOptional($1), string($3), "", joinOptional($5), string($6)});
+        free($1); free($3); free($5); free($6);
+    }
+    | optional_relacao_stereotype CARDINALITY operador_relacao optional_id CARDINALITY ID
+    {
+        if(classeAtual)
+            classeAtual->internalRelations.push_back({joinOptional($1), "", joinOptional($2), joinOptional($5), string($6)});
+        free($1); free($2); free($5); free($6);
+    }
+    ;
+
+optional_id:
+    { $$ = nullptr; }
+    | campo operador_relacao { $$ = $1; free($2); }
+    ;
+
+campo:
+      ID { $$ = $1; }
+    | HAS { $$ = $1; }
+    | RELATION_STEREOTYPE { $$ = $1; }
+    ;
+    
+relacao_externa:
+      optional_material RELATION optional_relacao_stereotype corpo_relacao_externa
+    {
+        if(pacoteAtual)
+            pacoteAtual->relacoesExternas.push_back({joinOptional($3), "Externa", string($4)});
+        free($3); free($4);
+    }
+    ;
+
+corpo_relacao_externa:
+      ID cardinalidade_optional operador_relacao ID cardinalidade_optional
+    {
+        $$ = (char*) strdup((string($1) + " " + joinOptional($2) + " " + string($3) + " " + string($4) + " " + joinOptional($5)).c_str());
+        free($1); free($2); free($3); free($4); free($5);
+    }
+    |
+      ID cardinalidade_optional operador_relacao CARDINALITY ID
+    {
+        $$ = (char*) strdup((string($1) + " " + joinOptional($2) + " " + string($3) + " " + string($4) + " " + string($5)).c_str());
+        free($1); free($2); free($3); free($4); free($5);
+    }
+    |
+      ID cardinalidade_optional operador_relacao ID operador_relacao cardinalidade_optional ID
+    {
+        $$ = (char*) strdup((string($1) + " " + joinOptional($2) + " " + string($3) + " " + string($4) + " " + string($5) + " " + joinOptional($6) + " " + string($7)).c_str());
+        free($1); free($2); free($3); free($4); free($5); free($6); free($7);
+    }
+    ;
+
+operador_relacao:
+      ARROW_AGGREGATION { $$ = (char*) "<>--"; }
+    | ARROW_ASSOCIATION { $$ = (char*) "--"; }
+    | ARROW_COMPOSITION { $$ = (char*) "<*>--"; }
+    | ARROW_AGGREGATION_EXISTENTIAL { $$ = (char*) "<o>--"; }
+    ;
+
+optional_material:
+      { $$ = nullptr; }
+    | MATERIAL { $$ = $1; }
+    ;
+
+optional_relacao_stereotype:
+      { $$ = nullptr; }
+    | RELATION_STEREOTYPE { $$ = $1; }
+    ;
+
+cardinalidade_optional:
+      { $$ = nullptr; } %prec EMPTY
+    | LBRACKET NUM RBRACKET { $$ = $2; }
+    | LBRACKET NUM ARROW_ASSOCIATION NUM RBRACKET { $$ = $2; }
+    | LBRACKET NUM DOT DOT NUM RBRACKET { $$ = $2; }
+    | CARDINALITY { $$ = $1; }
+    ;
+
+// GENSET
+genset:
+    meta_atributos GENSET ID WHERE GENERAL ID SPECIFICS lista_ids
+    {
+        if(pacoteAtual)
+            pacoteAtual->gensets.push_back({string($3), string($6), tempIdentifier});
+        tempIdentifier.clear();
+        free($3); free($6);
+    }
+    | meta_atributos GENSET ID LBRACE GENERAL ID SPECIFICS lista_ids RBRACE
+    {
+        if(pacoteAtual)
+            pacoteAtual->gensets.push_back({string($3), string($6), tempIdentifier});
+        tempIdentifier.clear();
+        free($3); free($6);
+    }
+    | GENERAL ID LBRACE meta_atributos SPECIFICS lista_ids RBRACE
+    {
+        if(pacoteAtual)
+            pacoteAtual->gensets.push_back({"Unnamed_Genset", string($2), tempIdentifier});
+        tempIdentifier.clear();
+        free($2);
+    }
+    ;
+
+meta_atributos:
+    | meta_atributos DISJOINT
+    | meta_atributos COMPLETE
+    ;
+
+lista_ids:
+      ID { tempIdentifier.push_back(string($1)); free($1); }
+    | lista_ids COMMA ID { tempIdentifier.push_back(string($3)); free($3); }
+    ;
+
+// SUBKIND
+classe_subkind:
+      cabecalho_classe OF FUNCTIONAL_COMPLEXES SPECIALIZES ID
+    {
+        adicionarParente(classeAtual, string($5));
+        free($5);
+    }
+    |
+      cabecalho_classe OF CLASS_STEREOTYPE SPECIALIZES ID
+    ;
+
+%%
+
+// MAPA DAS PALAVRAS RESERVADAS E STEREOTYPES
+void mapa() {
+    reservedDatatypes = {
+        {"number", NATIVE_TYPE}, {"string", NATIVE_TYPE}, {"boolean", NATIVE_TYPE},
+        {"date", NATIVE_TYPE}, {"time", NATIVE_TYPE}, {"datetime", NATIVE_TYPE}
+    };
+    reservedWords = {
+        {"package", PACKAGE}, {"import", IMPORT}, {"genset", GENSET},
+        {"disjoint", DISJOINT}, {"complete", COMPLETE}, {"general", GENERAL},
+        {"specifics", SPECIFICS}, {"where", WHERE},
+        {"enum", ENUM}, {"datatype", DATATYPE}, {"relation", RELATION}, {"of", OF},
+        {"specializes", SPECIALIZES}, {"functional-complexes", FUNCTIONAL_COMPLEXES},
+        {"has", HAS}, {"material", MATERIAL},
+    };
+    classStereotype = {
+        {"relator", CLASS_STEREOTYPE}, {"event", CLASS_STEREOTYPE}, {"situation", CLASS_STEREOTYPE},
+        {"process", CLASS_STEREOTYPE}, {"category", CLASS_STEREOTYPE}, {"mixin", CLASS_STEREOTYPE},
+        {"phaseMixin", CLASS_STEREOTYPE}, {"roleMixin", CLASS_STEREOTYPE},
+        {"historialRoleMixin", CLASS_STEREOTYPE}, {"kind", CLASS_STEREOTYPE},
+        {"collective", CLASS_STEREOTYPE}, {"quantity", CLASS_STEREOTYPE},
+        {"quality", CLASS_STEREOTYPE}, {"mode", CLASS_STEREOTYPE},
+        {"intrisicMode", CLASS_STEREOTYPE}, {"extrinsicMode", CLASS_STEREOTYPE},
+        {"subkind", CLASS_STEREOTYPE}, {"phase", CLASS_STEREOTYPE}, {"role", CLASS_STEREOTYPE},
+        {"historicalRole", CLASS_STEREOTYPE},{"intrinsic-modes", CLASS_STEREOTYPE}, 
+        {"relators", CLASS_STEREOTYPE}
+    };
+    relationStereotypes = {
+        {"derivation", RELATION_STEREOTYPE}, {"comparative", RELATION_STEREOTYPE},
+        {"mediation", RELATION_STEREOTYPE}, {"characterization", RELATION_STEREOTYPE},
+        {"externalDependence", RELATION_STEREOTYPE}, {"componentOf", RELATION_STEREOTYPE},
+        {"memberOf", RELATION_STEREOTYPE}, {"subCollectionOf", RELATION_STEREOTYPE},
+        {"subQualityOf", RELATION_STEREOTYPE}, {"instantiation", RELATION_STEREOTYPE},
+        {"termination", RELATION_STEREOTYPE}, {"participational", RELATION_STEREOTYPE},
+        {"participation", RELATION_STEREOTYPE}, {"historicalDependence", RELATION_STEREOTYPE},
+        {"creation", RELATION_STEREOTYPE}, {"manifestation", RELATION_STEREOTYPE},
+        {"bringsAbout", RELATION_STEREOTYPE}, {"triggers", RELATION_STEREOTYPE},
+        {"composition", RELATION_STEREOTYPE}, {"aggregation", RELATION_STEREOTYPE},
+        {"inherence", RELATION_STEREOTYPE}, {"value", RELATION_STEREOTYPE}, {"formal", RELATION_STEREOTYPE},
+        {"constitution", RELATION_STEREOTYPE}, {"constitutedBy", RELATION_STEREOTYPE}
+    };
+}
+
+int yylex(void) {
+    char typeTmp[50], lexemeTmp[100];
+    int lineTmp, colTmp;
+
+    // Lê no formato: TYPE LEXEMA LINHA COLUNA
+    if (fscanf(tokenFile, "%s %s %d %d", typeTmp, lexemeTmp, &lineTmp, &colTmp) != 4) {
+        return 0; // EOF ou erro de leitura
+    }
+
+    // Atualiza variáveis globais
+    strcpy(type, typeTmp);
+    strcpy(lexeme, lexemeTmp);
+    lineNumber = lineTmp;
+    columnNumber = colTmp;
+
+    std::string lex(lexeme);
+
+    // Símbolos Especiais
+    if (lex == "--") return ARROW_ASSOCIATION;
+    if (lex == "<>--") return ARROW_AGGREGATION;
+    if (lex == "<*>--") return ARROW_COMPOSITION;
+    if (lex == "<o>--") return ARROW_AGGREGATION_EXISTENTIAL;
+    if (lex == "{") return LBRACE;
+    if (lex == "}") return RBRACE;
+    if (lex == ":") return COLON;
+    if (lex == ",") return COMMA;
+    if (lex == ".") return DOT;
+    if (lex == "[") return LBRACKET;
+    if (lex == "]") return RBRACKET;
+
+    // Cardinalidade no formato [X..Y]
+    if (lex.length() > 1 && lex[0] == '[') {
+        yylval.strval = strdup(lexeme);
+        return CARDINALITY;
+    }
+
+    // Estereótipos de classe
+    if (classStereotype.find(lex) != classStereotype.end()) {
+        yylval.strval = strdup(lexeme);
+        return CLASS_STEREOTYPE;
+    }
+
+    // Remove '@' para estereótipos de relação
+    std::string cleanLex = lex;
+    if (lex == "@") return yylex();
+    if (lex[0] == '@') cleanLex = lex.substr(1);
+
+    // Estereótipos de relação
+    if (relationStereotypes.find(cleanLex) != relationStereotypes.end()) {
+        yylval.strval = strdup(cleanLex.c_str());
+        return RELATION_STEREOTYPE;
+    }
+
+    // Palavras reservadas
+    if (reservedWords.find(lex) != reservedWords.end()) {
+        return reservedWords[lex];
+    }
+
+    // Tipos nativos
+    if (reservedDatatypes.find(lex) != reservedDatatypes.end()) {
+        yylval.strval = strdup(lexeme);
+        return NATIVE_TYPE;
+    }
+
+    // Número
+    if (strcmp(type, "NUM") == 0) {
+        yylval.strval = strdup(lexeme);
+        return NUM;
+    }
+
+    // EOF
+    if (strcmp(type, "EOF") == 0) return 0;
+
+    // Identificador genérico
+    yylval.strval = strdup(lexeme);
+    return ID;
+}
+
+void yyerror(const char *s) {
+    ErrorInfo erro;
+    erro.line = lineNumber;
+    erro.col = columnNumber;
+    erro.mensagem = string(s);
+
+    string currentToken = string(lexeme);
+    if (currentToken == "}") {
+        erro.sugestao = "Confira se há uma chave de abertura correspondente.";
+    } else if (currentToken == "{") {
+        erro.sugestao = "Confira se há uma chave de fechamento correspondente.";
+    } else if (currentToken == "]") {
+        erro.sugestao = "Confira se há um colchete de abertura correspondente.";
+    } else if (currentToken == "[") {
+        erro.sugestao = "Confira se há um colchete de fechamento correspondente.";
+    } else if (currentToken == ":") {
+        erro.sugestao = "Verifique se o ':' está sendo usado corretamente em declarações de atributos.";
+    } else if (currentToken == ",") {
+        erro.sugestao = "Verifique se a vírgula está separando corretamente os elementos.";
+    } else if (currentToken == ".") {
+        erro.sugestao = "Verifique o uso correto do ponto.";
+    } else if (currentToken == "--" || currentToken == "<>--" || currentToken == "<*>--" || currentToken == "<o>--" || currentToken == "->"
+    || currentToken == "-<>--") {
+        erro.sugestao = "Operador de relação incorreto ou incompleto.";
+    } else if (reservedWords.find(currentToken) != reservedWords.end()) {
+        erro.sugestao = "Verifique o uso correto da palavra reservada '" + currentToken + "'.";
+    } else {
+        erro.sugestao = "Verifique a sintaxe próxima ao token '" + currentToken + "'.";
+    }
+
+    errorLog.push_back(erro);
+
+    fprintf(stderr, "\n[ERRO] Arquivo: %s Linha: %d, Coluna: %d\n", currentFileName.c_str(), erro.line, erro.col);
+    fprintf(stderr, "   -> Lexema encontrado: '%s'\n", currentToken.c_str());
+    fprintf(stderr, "   -> Sugestão: %s\n", erro.sugestao.c_str());
+}
+
+void imprimirErro() {
+    if (!errorLog.empty()) {
+
+        cout << "\n A análise finalizou com " << errorLog.size(); 
+        if(errorLog.size() > 1) cout << " erros." << endl;
+         else cout << " erro." << endl;
+    }
+
+}
+
+void imprimirRelatorio(string dirName) {
+
+    string reportPath = "output/" + dirName + "/" + dirName + "_Syntax_analysis.txt";
+    relatorioFile.open(reportPath);
+    
+    relatorioFile << "\n======================================================" << endl;
+    relatorioFile << "               RELATÓRIO DE SÍNTESE" << endl;
+    relatorioFile << "======================================================" << endl;
+
+    // ===== Estatísticas Gerais =====
+    relatorioFile << "\n[ESTATÍSTICAS GERAIS]" << endl;
+    relatorioFile << "Pacotes: " << pacotes.size() << " (";
+    for (size_t i = 0; i < pacotes.size(); ++i)
+        relatorioFile << pacotes[i].name << (i < pacotes.size() - 1 ? ", " : "");
+    relatorioFile << ")" << endl;
+
+    int totalClasses = 0, totalRelationsInternas = 0, totalRelationsExternas = 0;
+    int totalGensets = 0, totalEnums = 0, totalDatatypes = reservedDatatypes.size();
+
+    for (const auto& p : pacotes) {
+        totalClasses += p.classes.size();
+        for (const auto& c : p.classes) totalRelationsInternas += c.internalRelations.size();
+        totalRelationsExternas += p.relacoesExternas.size();
+        totalGensets += p.gensets.size();
+        totalEnums += p.enums.size();
+    }
+
+    relatorioFile << "Classes: " << totalClasses << endl;
+    relatorioFile << "Relações Internas: " << totalRelationsInternas << endl;
+    relatorioFile << "Relações Externas: " << totalRelationsExternas << endl;
+    relatorioFile << "Gensets: " << totalGensets << endl;
+    relatorioFile << "Enums: " << totalEnums << endl;
+    relatorioFile << "Datatypes: " << totalDatatypes << endl;
+
+    relatorioFile << "\n[DETALHAMENTO POR PACOTE]" << endl;
+
+    for (const auto& pacote : pacotes) {
+        relatorioFile << "\n" << pacote.name << endl;
+
+        if (pacote.classes.empty() && pacote.enums.empty() && pacote.gensets.empty() && pacote.relacoesExternas.empty()) {
+            relatorioFile << "(Pacote vazio)" << endl;
+            continue;
+        }
+
+        // Classes em hierarquia
+        for (size_t i = 0; i < pacote.classes.size(); ++i) {
+            const auto& classes = pacote.classes[i];
+            bool isLastClass = (i == pacote.classes.size() - 1);
+
+            relatorioFile << (isLastClass ? "└─ " : "├─ ") << classes.name << " [" << classes.stereotype << "]";
+            if (!classes.parents.empty()) {
+                relatorioFile << " (Herda de: ";
+                for (size_t j = 0; j < classes.parents.size(); ++j) {
+                    relatorioFile << classes.parents[j] << (j < classes.parents.size() - 1 ? ", " : "");
+                }
+                relatorioFile << ")";
+            }
+            relatorioFile << endl;
+
+            // Relações internas
+            if (!classes.internalRelations.empty()) {
+                relatorioFile << (isLastClass ? "   ├─ Internas:" : "   │─ Internas:") << endl;
+                for (const auto& relacao : classes.internalRelations) {
+                    relatorioFile << "   │  > ";
+                    if(!relacao.stereotype.empty()) relatorioFile << "(@" << relacao.stereotype << ") ";
+                    if(!relacao.sourceCardinality.empty()) relatorioFile << relacao.sourceCardinality << " ";
+                    if(!relacao.name.empty()) relatorioFile << relacao.name << " ";
+                    else relatorioFile << "-- ";
+                    if(!relacao.targetCardinality.empty()) relatorioFile << relacao.targetCardinality << " ";
+                    relatorioFile << "--> " << relacao.targetClass << endl;
+                }
+            }
+
+            // Atributos
+            if (!classes.attributes.empty()) {
+                relatorioFile << (isLastClass ? "   ├─ Atributos: " : "   │─ Atributos: ");
+                for (const auto& at : classes.attributes) relatorioFile << at << ", ";
+                relatorioFile << endl;
+            }
+        }
+
+        // Gensets
+        if (!pacote.gensets.empty()) {
+            relatorioFile << "   └─ Gensets:" << endl;
+            for (const auto& gs : pacote.gensets) {
+                relatorioFile << "       * " << gs.name << endl;
+                relatorioFile << "         - General: " << gs.general << endl;
+                relatorioFile << "         - Specifics: ";
+                for (size_t i = 0; i < gs.specifics.size(); ++i) {
+                    relatorioFile << gs.specifics[i] << (i < gs.specifics.size() - 1 ? ", " : "");
+                }
+                relatorioFile << endl;
+            }
+        }
+
+        // Enums
+        if (!pacote.enums.empty()) {
+            relatorioFile << "   └─ Enums:" << endl;
+            for (const auto& en : pacote.enums) {
+                relatorioFile << "       * " << en.name << ": ";
+                for (size_t i = 0; i < en.literals.size(); ++i) {
+                    relatorioFile << en.literals[i] << (i < en.literals.size() - 1 ? ", " : "");
+                }
+                relatorioFile << endl;
+            }
+        }
+
+        // Relações externas
+        if (!pacote.relacoesExternas.empty()) {
+            relatorioFile << "   └─ Relações Externas:" << endl;
+            for (const auto& rel : pacote.relacoesExternas) {
+                relatorioFile << "       * ";
+                if (!rel.stereotype.empty()) relatorioFile << "(@" << rel.stereotype << ") ";
+                relatorioFile << rel.details << endl;
+            }
+        }
+    }
+
+    relatorioFile.close();
+}
+
+
