@@ -1,0 +1,48 @@
+=== RELATÓRIO DE CONTAGEM ÚNICA ===
+
+CLASSES: 19
+  - RentalCar
+  - AvailableCar
+  - Car
+  - CarRental
+  - Organization
+  - DeceasedPerson
+  - CorporateCustomer
+  - Teenager
+  - UnderMaintenanceCar
+  - Person
+  - Employee
+  - ResponsibleEmployee
+  - LivingPerson
+  - Adult
+  - Child
+  - AgePhase
+  - LifeStatus
+  - Customer
+  - PersonalCustomer
+
+RELAÇÕES: 4
+  - involvesCustomer
+  - involvesMediator
+  - involvesRental
+  - relator
+
+PALAVRAS RESERVADAS: 7
+  - specifics
+  - genset
+  - complete
+  - disjoint
+  - specializes
+  - general
+  - package
+
+CLASSES ESTEREÓTIPOS: 4
+  - roleMixin
+  - phase
+  - role
+  - kind
+
+RELAÇÕES ESTEREÓTIPOS: 1
+  - mediation
+
+=== TOTAL GERAL: 35 elementos únicos ===
