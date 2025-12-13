@@ -28,212 +28,290 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
     // =========================================================================
     // 1. SUBKIND PATTERN
     // =========================================================================
-    for (const auto& g : gensets) {
-        auto it = classes.find(g.general);
-        if (it == classes.end()) continue;
+    map<string, vector<string>> subkindsPorGeneral;
 
-        if (it->second.estereotipo == "kind") {
-            bool all_subkinds = true;
+    for (const auto& [nomeClasse, classe] : classes) {
+        if (classe.estereotipo != "subkind") continue;
 
-            for (const auto& spec : g.specifics) {
-                auto itSpec = classes.find(spec);
-                if (itSpec == classes.end()) continue;
-
-                string stereo = itSpec->second.estereotipo;
-                if (stereo != "subkind" && stereo != "kind") {
-                    all_subkinds = false;
-                }
-            }
-
-            if (all_subkinds && !g.specifics.empty()) {
-                string nome = "Subkind Pattern (" + g.general + ")";
-                if (contem(g.modifiers, "disjoint")) {
-                    padroes_identificados.push_back("[OK] " + nome);
-                } else {
-                    erros.push_back(
-                        "Erro no " + nome +
-                        ": Genset '" + g.nome + "' deve ser disjoint. "
-                        "-> Coerção: assumindo disjoint."
-                    );
-                    padroes_identificados.push_back("[COERGIDO] " + nome);
-                }
-            }
+        for (const auto& pai : classe.parents) {
+            subkindsPorGeneral[pai].push_back(nomeClasse);
         }
     }
+
+    // 2. Validar cada subkind
+    for (const auto& [nomeClasse, classe] : classes) {
+
+    if (classe.estereotipo != "subkind") continue;
+
+    // Deve especializar alguém
+    if (classe.parents.empty()) {
+        erros.push_back(
+            "[Subkind Pattern] '" + nomeClasse +
+            "' deve especializar um Kind ou Subkind."
+        );
+        continue;
+    }
+
+    // Pai deve ser rígido (kind ou subkind)
+    bool paiRigido = false;
+    for (const auto& pai : classe.parents) {
+        auto itPai = classes.find(pai);
+        if (itPai != classes.end() &&
+            (itPai->second.estereotipo == "kind" ||
+             itPai->second.estereotipo == "subkind")) {
+            paiRigido = true;
+        }
+    }
+
+    if (!paiRigido) {
+        erros.push_back(
+            "[Subkind Pattern] '" + nomeClasse +
+            "' deve herdar de um Kind ou outro Subkind."
+        );
+        continue;
+    }
+
+    // 3. Verifica se o general tem múltiplos subkinds
+    bool precisaDeGenset = false;
+    for (const auto& pai : classe.parents) {
+        if (subkindsPorGeneral[pai].size() >= 2) {
+            precisaDeGenset = true;
+        }
+    }
+
+    // 4. Se precisa, verifica participação em genset
+    if (precisaDeGenset) {
+        bool participaDeGenset = false;
+        for (const auto& g : gensets) {
+            if (contem(g.specifics, nomeClasse)) {
+                participaDeGenset = true;
+                break;
+            }
+        }
+
+        if (!participaDeGenset) {
+            erros.push_back(
+                "[Subkind Pattern] '" + nomeClasse +
+                "' especializa um general com múltiplos subkinds e deve participar de um genset."
+            );
+            continue;
+        }
+    }
+
+    // 5. Padrão identificado
+    padroes_identificados.push_back(
+        "[OK] Subkind Pattern (" + nomeClasse + ")"
+    );
+    }   
+
 
     // =========================================================================
     // 2. ROLE PATTERN
     // =========================================================================
-    for (const auto& [nome, classe] : classes) {
+    for (const auto& [nomeClasse, classe] : classes) {
+
+    // 1. Só analisa roles
     if (classe.estereotipo != "role") continue;
 
-        for (const auto& parent : classe.parents) {
-            auto it = classes.find(parent);
-            if (it != classes.end() &&
-                it->second.estereotipo == "kind") {
+    // 2. Deve herdar de alguém
+    if (classe.parents.empty()) {
+        erros.push_back(
+            "[Role Pattern] '" + nomeClasse +
+            "' deve especializar uma classe."
+        );
+        continue;
+    }
 
-                padroes_identificados.push_back(
-                    "[OK] Role Pattern (" + parent + " -> " + nome + ")"
-                );
-            }
+    // 3. Pai deve ser Kind ou Role
+    bool paiValido = false;
+    for (const auto& pai : classe.parents) {
+        auto itPai = classes.find(pai);
+        if (itPai != classes.end() &&
+            (itPai->second.estereotipo == "kind" ||
+             itPai->second.estereotipo == "role")) {
+            paiValido = true;
         }
     }
+
+    if (!paiValido) {
+        erros.push_back(
+            "[Role Pattern] '" + nomeClasse +
+            "' herda de uma classe inválida."
+        );
+        continue;
+    }
+
+    // 4. Role DEVE participar de um genset
+    bool participaDeGenset = false;
+    for (const auto& g : gensets) {
+        if (contem(g.specifics, nomeClasse)) {
+            participaDeGenset = true;
+            break;
+        }
+    }
+
+    if (!participaDeGenset) {
+        erros.push_back(
+            "[Role Pattern] '" + nomeClasse +
+            "' deve participar de um Genset."
+        );
+        continue;
+    }
+
+    // 5. Padrão identificado
+    padroes_identificados.push_back(
+        "[OK] Role Pattern (" + nomeClasse + ")"
+    );
+}
 
     // =========================================================================
     // 3. PHASE PATTERN
     // =========================================================================
-    for (const auto& g : gensets) {
-        auto it = classes.find(g.general);
-        if (it == classes.end()) continue;
-
-        if (it->second.estereotipo == "kind") {
-            bool all_phases = true;
-
-            for (const auto& spec : g.specifics) {
-                auto itSpec = classes.find(spec);
-                if (itSpec == classes.end() ||
-                    itSpec->second.estereotipo != "phase") {
-                    all_phases = false;
-                }
-            }
-
-            if (all_phases && !g.specifics.empty()) {
-                string nome = "Phase Pattern (" + g.general + ")";
-                if (contem(g.modifiers, "disjoint")) {
-                    padroes_identificados.push_back("[OK] " + nome);
-                } else {
-                    erros.push_back(
-                        "Erro no " + nome +
-                        ": Genset '" + g.nome + "' deve ser disjoint. "
-                        "-> Coerção aplicada."
-                    );
-                    padroes_identificados.push_back("[COERGIDO] " + nome);
-                }
-            }
-        }
-    }
-
-    // =========================================================================
-    // 4. RELATOR PATTERN
-    // =========================================================================
     for (const auto& [nomeClasse, classe] : classes) {
-        if (classe.estereotipo != "relator") continue;
 
-        vector<string> roles;
+    if (classe.estereotipo != "relator") continue;
 
-        for (const auto& rel : classe.relacoes_internas) {
-            for (auto s : rel.stereotypes) {
-                if (limpaStereo(s) == "mediation") {
-                    auto it = classes.find(rel.target);
-                    if (it != classes.end() &&
-                        it->second.estereotipo == "role") {
-                        roles.push_back(rel.target);
-                    } else {
-                        erros.push_back(
-                            "Erro no Relator Pattern '" + nomeClasse +
-                            "': mediação inválida para '" + rel.target + "'. "
-                            "-> Coerção aplicada."
-                        );
-                        roles.push_back(rel.target);
-                    }
-                }
-            }
+    int mediacoesValidas = 0;
+
+    for (const auto& rel : classe.relacoes_internas) {
+
+        // REGRA: TODA relação interna de relator é mediação
+        auto it = classes.find(rel.target);
+        if (it == classes.end()) {
+            erros.push_back(
+                "[Relator Pattern] O relator '" + nomeClasse +
+                "' media uma classe inexistente: '" + rel.target + "'."
+            );
+            continue;
         }
 
-        if (roles.size() >= 2) {
-            bool has_material = false;
-
-            for (const auto& relExt : relacoes_externas) {
-                for (auto s : relExt.stereotypes) {
-                    if (limpaStereo(s) == "material") {
-                        if (contem(roles, relExt.source) &&
-                            contem(roles, relExt.target)) {
-                            has_material = true;
-                        }
-                    }
-                }
-            }
-
-            string nome = "Relator Pattern (" + nomeClasse + ")";
-            if (has_material) {
-                padroes_identificados.push_back("[OK] " + nome);
-            } else {
-                padroes_identificados.push_back(
-                    "[AVISO] " + nome +
-                    ": relação material não encontrada."
-                );
-            }
+        if (it->second.estereotipo == "role") {
+            mediacoesValidas++;
+        } else {
+            erros.push_back(
+                "[Relator Pattern] O relator '" + nomeClasse +
+                "' possui mediação inválida para '" + rel.target +
+                "' (estereótipo='" + it->second.estereotipo +
+                "'). Esperado: 'role'."
+            );
         }
     }
+
+    if (mediacoesValidas < 2) {
+        erros.push_back(
+            "[Relator Pattern] O relator '" + nomeClasse +
+            "' deve possuir pelo menos 2 mediações (@mediation) válidas para roles."
+        );
+    } else {
+        padroes_identificados.push_back(
+            "[OK] Relator Pattern (" + nomeClasse + ")"
+        );
+    }
+ }
 
     // =========================================================================
     // 5. MODE PATTERN
     // =========================================================================
     for (const auto& [nomeClasse, classe] : classes) {
-        if (classe.estereotipo != "mode") continue;
 
-        bool has_charac = false;
-        bool has_ext_dep = false;
+    // 1. Só analisa mode
+    if (classe.estereotipo != "mode") continue;
 
-        for (const auto& rel : classe.relacoes_internas) {
-            for (auto s : rel.stereotypes) {
-                s = limpaStereo(s);
-                if (s == "characterization") has_charac = true;
-                if (s == "externalDependence") has_ext_dep = true;
-            }
-        }
+    bool temCharacterization = false;
+    bool temExternalDependence = false;
 
-        string nome = "Mode Pattern (" + nomeClasse + ")";
-        if (has_charac && has_ext_dep) {
-            padroes_identificados.push_back("[OK] " + nome);
-        } else if (has_charac) {
-            erros.push_back(
-                "Padrão Mode '" + nomeClasse +
-                "' incompleto. -> Coerção aplicada."
-            );
-            padroes_identificados.push_back("[PARCIAL] " + nome);
+    // 2. Verifica relações obrigatórias
+    for (const auto& rel : classe.relacoes_internas) {
+        for (auto s : rel.stereotypes) {
+            s = limpaStereo(s);
+            if (s == "characterization") temCharacterization = true;
+            if (s == "externalDependence") temExternalDependence = true;
         }
     }
+
+    // 3. Erros obrigatórios
+    if (!temCharacterization) {
+        erros.push_back(
+            "[Mode Pattern] '" + nomeClasse +
+            "' deve possuir uma relação @characterization."
+        );
+    }
+
+    if (!temExternalDependence) {
+        erros.push_back(
+            "[Mode Pattern] '" + nomeClasse +
+            "' deve possuir uma relação @externalDependence."
+        );
+    }
+
+    // 4. Só é OK se tiver as duas
+    if (temCharacterization && temExternalDependence) {
+        padroes_identificados.push_back(
+            "[OK] Mode Pattern (" + nomeClasse + ")"
+        );
+    }
+   }
 
     // =========================================================================
     // 6. ROLE MIXIN PATTERN
     // =========================================================================
     for (const auto& [nomeClasse, classe] : classes) {
-        if (classe.estereotipo != "roleMixin") continue;
 
-        const Genset* genset_rm = nullptr;
-        for (const auto& g : gensets) {
-            if (g.general == nomeClasse) {
-                genset_rm = &g;
-                break;
-            }
+    // 1. Só analisa roleMixin
+    if (classe.estereotipo != "roleMixin") continue;
+
+    const Genset* gensetEncontrado = nullptr;
+
+    // 2. Procurar genset onde ele é o general
+    for (const auto& g : gensets) {
+        if (g.general == nomeClasse) {
+            gensetEncontrado = &g;
+            break;
         }
+    }
 
-        if (!genset_rm) continue;
+    // 3. Deve ser general de um genset
+    if (!gensetEncontrado) {
+        erros.push_back(
+            "[RoleMixin Pattern] '" + nomeClasse +
+            "' deve ser a classe geral de um genset disjoint e complete."
+        );
+        continue;
+    }
 
-        bool all_roles = true;
-        for (const auto& spec : genset_rm->specifics) {
-            auto it = classes.find(spec);
-            if (it == classes.end() ||
-                it->second.estereotipo != "role") {
-                all_roles = false;
-            }
+    // 4. Genset deve ser disjoint e complete
+    bool isDisjoint  = contem(gensetEncontrado->modifiers, "disjoint");
+    bool isComplete  = contem(gensetEncontrado->modifiers, "complete");
+
+    if (!isDisjoint || !isComplete) {
+        erros.push_back(
+            "[RoleMixin Pattern] Genset '" + gensetEncontrado->nome +
+            "' deve ser marcado como disjoint e complete."
+        );
+        continue;
+    }
+
+    // 5. Todas as específicas devem ser role
+    bool todasSaoRoles = true;
+    for (const auto& spec : gensetEncontrado->specifics) {
+        auto itSpec = classes.find(spec);
+        if (itSpec == classes.end() ||
+            itSpec->second.estereotipo != "role") {
+
+            erros.push_back(
+                "[RoleMixin Pattern] A classe '" + spec +
+                "' deve ser estereotipada como role."
+            );
+            todasSaoRoles = false;
         }
+    }
 
-        if (all_roles) {
-            string nome = "RoleMixin Pattern (" + nomeClasse + ")";
-            if (contem(genset_rm->modifiers, "disjoint") &&
-                contem(genset_rm->modifiers, "complete")) {
-                padroes_identificados.push_back("[OK] " + nome);
-            } else {
-                erros.push_back(
-                    "Erro no " + nome +
-                    ": deve ser disjoint e complete. "
-                    "-> Coerção aplicada."
-                );
-                padroes_identificados.push_back("[COERGIDO] " + nome);
-            }
-        }
+    if (!todasSaoRoles) continue;
+
+    // 6. Padrão identificado com sucesso
+    padroes_identificados.push_back(
+        "[OK] RoleMixin Pattern (" + nomeClasse + ")"
+    );
     }
 
     return {padroes_identificados, erros};

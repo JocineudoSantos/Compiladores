@@ -67,31 +67,40 @@ Sintese ler_relatorio(const string& caminho) {
             continue;
         }
 
+        // ================= CLASSES =================
        if (secao == "[CLASSES]" && line[0] == '-') {
 
-            size_t p1 = line.find('(');
-            size_t p2 = line.find(')');
+        Classe c;
 
-            string nome = trim(line.substr(2, p1 - 2));
-            string inside = line.substr(p1 + 1, p2 - p1 - 1);
+        // Exemplo de linha:
+        // - Employee (stereotype=role) | parents: Person
 
-            string stereo = inside.substr(inside.find('=') + 1);
-            s.classes[nome].estereotipo = stereo;
+        size_t p1 = line.find('(');
+        size_t p2 = line.find(')');
 
-            // -------- ler parents --------
-            if (line.find("parents:") != string::npos) {
-            size_t p = line.find("parents:");
-            string rest = line.substr(p + 8);
+        // Nome da classe
+        c.nome = trim(line.substr(2, p1 - 2));
 
-            stringstream ss(rest);
-            string parent;
-            while (getline(ss, parent, ',')) {
-                s.classes[nome].parents.push_back(trim(parent));
+        // Estereótipo
+        string inside = line.substr(p1 + 1, p2 - p1 - 1);
+        c.estereotipo = trim(
+            inside.substr(inside.find('=') + 1)
+        );
+
+        // Parents (opcional)
+        size_t parentsPos = line.find("parents:");
+        if (parentsPos != string::npos) {
+            string parentsStr = line.substr(parentsPos + 8);
+            stringstream ss(parentsStr);
+            string pai;
+            while (getline(ss, pai, ',')) {
+                c.parents.push_back(trim(pai));
             }
-            }
-
         }
 
+        // Salva no mapa
+        s.classes[c.nome] = c;
+        }
 
         // ================= RELAÇÕES INTERNAS =================
         else if (secao == "[RELAÇÕES INTERNAS]" && line[0] == '-') {

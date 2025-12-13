@@ -23,8 +23,9 @@ struct RelacaoExterna {
 
 // ================= CLASSES =================
 struct Classe {
+    string nome;
     string estereotipo;
-     vector<string> parents;      
+    vector<string> parents; 
     vector<RelacaoInterna> relacoes_internas;
 };
 

@@ -3,11 +3,15 @@
 =============================================
 
 [PADRÕES IDENTIFICADOS]
-- [OK] Role Pattern (Organization -> CorporateCustomer)
-- [OK] Role Pattern (Person -> Employee)
-- [OK] Role Pattern (Person -> PersonalCustomer)
-- [OK] Phase Pattern (Person)
+- [OK] Subkind Pattern (CarAgency)
 
 [ERROS / AVISOS]
-- Nenhum erro ou aviso encontrado.
+- [Role Pattern] 'CorporateCustomer' deve participar de um Genset.
+- [Role Pattern] 'Employee' deve participar de um Genset.
+- [Role Pattern] 'PersonalCustomer' deve participar de um Genset.
+- [Role Pattern] 'RentalCar' herda de uma classe inválida.
+- [Role Pattern] 'ResponsibleEmployee' deve participar de um Genset.
+- [Relator Pattern] O relator 'CarOwnership' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
+- [Relator Pattern] O relator 'CarRental' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
+- [RoleMixin Pattern] 'Customer' deve ser a classe geral de um genset disjoint e complete.
 
