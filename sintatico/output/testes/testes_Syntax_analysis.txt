@@ -1,0 +1,56 @@
+
+======================================================
+        RELATÓRIO DE SÍNTESE SINTÁTICA (NORMALIZADO)
+======================================================
+
+======================================================
+PACOTE: CarRental
+======================================================
+
+[CLASSES]
+- Person (stereotype=kind)
+- Employee (stereotype=role) | parents: Person
+- ResponsibleEmployee (stereotype=role) | parents: Employee
+- DeceasedPerson (stereotype=phase) | parents: Person
+- LivingPerson (stereotype=phase) | parents: Person
+- Child (stereotype=phase) | parents: LivingPerson
+- Teenager (stereotype=phase) | parents: LivingPerson
+- Adult (stereotype=phase) | parents: LivingPerson
+- Customer (stereotype=roleMixin)
+- PersonalCustomer (stereotype=role) | parents: Customer, Person
+- Organization (stereotype=kind)
+- CorporateCustomer (stereotype=role) | parents: Organization
+- Car (stereotype=kind)
+- AvailableCar (stereotype=phase) | parents: Car
+- UnderMaintenanceCar (stereotype=phase) | parents: Car
+- RentalCar (stereotype=role) | parents: AvailableCar
+- CarRental (stereotype=relator)
+
+[RELAÇÕES INTERNAS]
+- source: CarRental --(@mediation)--> RentalCar | name: involvesRental | card: ..[1]
+- source: CarRental --(@mediation)--> ResponsibleEmployee | name: involvesMediator | card: ..[1]
+- source: CarRental --(@mediation)--> Customer | name: involvesCustomer | card: ..[1]
+
+[GENSETS]
+- AgePhase
+  general   : LivingPerson
+  specifics : Child, Teenager, Adult
+  modifiers : disjoint, complete
+- LifeStatus
+  general   : Person
+  specifics : DeceasedPerson, LivingPerson
+  modifiers : disjoint, complete
+
+======================================================
+PACOTE: CarOwnership
+======================================================
+
+[CLASSES]
+- Organization (stereotype=kind)
+- CarAgency (stereotype=subkind) | parents: Organization
+- Car (stereotype=kind)
+- CarOwnership (stereotype=relator)
+
+[RELAÇÕES INTERNAS]
+- source: CarOwnership --(@mediation)--> CarAgency | name: involvesOwner | card: ..[1]
+- source: CarOwnership --(@mediation)--> Car | name: involvesProperty | card: ..[1]

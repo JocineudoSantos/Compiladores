@@ -38,12 +38,14 @@ struct ClassInfo {
     vector<string> parents;
     vector<string> attributes;
     vector<InternalRelationInformacoes> internalRelations;
+     string comment;  // Opcional, para armazenar notas sobre a classe
 };
 
 struct GensetInfo {
     string name;
     string general;
     vector<string> specifics;
+    vector<string> modifiers;  // Adicionar modificadores (ex: disjoint, complete)
 };
 
 struct PacoteInformacoes {
@@ -86,6 +88,7 @@ vector<EnumInformacoes> enums;
 
 // Variáveis temporárias
 vector<string> tempIdentifier;
+vector<string> tempModifiers;
 vector<string> tempEnum;
 
 // Log de erros
@@ -391,35 +394,63 @@ cardinalidade_optional:
     | LBRACKET NUM DOT DOT NUM RBRACKET { $$ = $2; }
     | CARDINALITY { $$ = $1; }
     ;
-
-// GENSET
+    
+//gensets
 genset:
     meta_atributos GENSET ID WHERE GENERAL ID SPECIFICS lista_ids
     {
-        if(pacoteAtual)
-            pacoteAtual->gensets.push_back({string($3), string($6), tempIdentifier});
+        if (pacoteAtual)
+            pacoteAtual->gensets.push_back({
+                string($3),        // name
+                string($6),        // general
+                tempIdentifier,    // specifics
+                tempModifiers      // modifiers
+            });
+
         tempIdentifier.clear();
+        tempModifiers.clear();
         free($3); free($6);
     }
     | meta_atributos GENSET ID LBRACE GENERAL ID SPECIFICS lista_ids RBRACE
     {
-        if(pacoteAtual)
-            pacoteAtual->gensets.push_back({string($3), string($6), tempIdentifier});
+        if (pacoteAtual)
+            pacoteAtual->gensets.push_back({
+                string($3),
+                string($6),
+                tempIdentifier,
+                tempModifiers
+            });
+
         tempIdentifier.clear();
+        tempModifiers.clear();
         free($3); free($6);
     }
     | GENERAL ID LBRACE meta_atributos SPECIFICS lista_ids RBRACE
     {
-        if(pacoteAtual)
-            pacoteAtual->gensets.push_back({"Unnamed_Genset", string($2), tempIdentifier});
+        if (pacoteAtual)
+            pacoteAtual->gensets.push_back({
+                "Unnamed_Genset",
+                string($2),
+                tempIdentifier,
+                tempModifiers
+            });
+
         tempIdentifier.clear();
+        tempModifiers.clear();
         free($2);
     }
     ;
 
 meta_atributos:
+      /* vazio */
     | meta_atributos DISJOINT
+        {
+            tempModifiers.push_back("disjoint");
+        }
     | meta_atributos COMPLETE
+        {
+            tempModifiers.push_back("complete");
+        }
     ;
 
 lista_ids:
@@ -611,121 +642,112 @@ void imprimirRelatorio(string dirName) {
 
     string reportPath = "output/" + dirName + "/" + dirName + "_Syntax_analysis.txt";
     relatorioFile.open(reportPath);
-    
+
     relatorioFile << "\n======================================================" << endl;
-    relatorioFile << "               RELATÓRIO DE SÍNTESE" << endl;
+    relatorioFile << "        RELATÓRIO DE SÍNTESE SINTÁTICA (NORMALIZADO)" << endl;
     relatorioFile << "======================================================" << endl;
 
-    // ===== Estatísticas Gerais =====
-    relatorioFile << "\n[ESTATÍSTICAS GERAIS]" << endl;
-    relatorioFile << "Pacotes: " << pacotes.size() << " (";
-    for (size_t i = 0; i < pacotes.size(); ++i)
-        relatorioFile << pacotes[i].name << (i < pacotes.size() - 1 ? ", " : "");
-    relatorioFile << ")" << endl;
-
-    int totalClasses = 0, totalRelationsInternas = 0, totalRelationsExternas = 0;
-    int totalGensets = 0, totalEnums = 0, totalDatatypes = reservedDatatypes.size();
-
-    for (const auto& p : pacotes) {
-        totalClasses += p.classes.size();
-        for (const auto& c : p.classes) totalRelationsInternas += c.internalRelations.size();
-        totalRelationsExternas += p.relacoesExternas.size();
-        totalGensets += p.gensets.size();
-        totalEnums += p.enums.size();
-    }
-
-    relatorioFile << "Classes: " << totalClasses << endl;
-    relatorioFile << "Relações Internas: " << totalRelationsInternas << endl;
-    relatorioFile << "Relações Externas: " << totalRelationsExternas << endl;
-    relatorioFile << "Gensets: " << totalGensets << endl;
-    relatorioFile << "Enums: " << totalEnums << endl;
-    relatorioFile << "Datatypes: " << totalDatatypes << endl;
-
-    relatorioFile << "\n[DETALHAMENTO POR PACOTE]" << endl;
-
+    // DETALHAMENTO
     for (const auto& pacote : pacotes) {
-        relatorioFile << "\n" << pacote.name << endl;
 
-        if (pacote.classes.empty() && pacote.enums.empty() && pacote.gensets.empty() && pacote.relacoesExternas.empty()) {
-            relatorioFile << "(Pacote vazio)" << endl;
-            continue;
-        }
+        relatorioFile << "\n======================================================" << endl;
+        relatorioFile << "PACOTE: " << pacote.name << endl;
+        relatorioFile << "======================================================" << endl;
 
-        // Classes em hierarquia
-        for (size_t i = 0; i < pacote.classes.size(); ++i) {
-            const auto& classes = pacote.classes[i];
-            bool isLastClass = (i == pacote.classes.size() - 1);
+        // CLASSES 
+        relatorioFile << "\n[CLASSES]" << endl;
+        for (const auto& c : pacote.classes) {
+            relatorioFile << "- " << c.name
+                          << " (stereotype=" << c.stereotype << ")";
 
-            relatorioFile << (isLastClass ? "└─ " : "├─ ") << classes.name << " [" << classes.stereotype << "]";
-            if (!classes.parents.empty()) {
-                relatorioFile << " (Herda de: ";
-                for (size_t j = 0; j < classes.parents.size(); ++j) {
-                    relatorioFile << classes.parents[j] << (j < classes.parents.size() - 1 ? ", " : "");
-                }
-                relatorioFile << ")";
+            if (!c.parents.empty()) {
+                relatorioFile << " | parents: ";
+                for (size_t i = 0; i < c.parents.size(); ++i)
+                    relatorioFile << c.parents[i]
+                                  << (i < c.parents.size() - 1 ? ", " : "");
             }
             relatorioFile << endl;
+        }
 
-            // Relações internas
-            if (!classes.internalRelations.empty()) {
-                relatorioFile << (isLastClass ? "   ├─ Internas:" : "   │─ Internas:") << endl;
-                for (const auto& relacao : classes.internalRelations) {
-                    relatorioFile << "   │  > ";
-                    if(!relacao.stereotype.empty()) relatorioFile << "(@" << relacao.stereotype << ") ";
-                    if(!relacao.sourceCardinality.empty()) relatorioFile << relacao.sourceCardinality << " ";
-                    if(!relacao.name.empty()) relatorioFile << relacao.name << " ";
-                    else relatorioFile << "-- ";
-                    if(!relacao.targetCardinality.empty()) relatorioFile << relacao.targetCardinality << " ";
-                    relatorioFile << "--> " << relacao.targetClass << endl;
+       // RELAÇÕES INTERNAS 
+        relatorioFile << "\n[RELAÇÕES INTERNAS]" << endl;
+        for (const auto& c : pacote.classes) {
+
+            for (const auto& r : c.internalRelations) {
+
+                // Normalização do estereótipo para saída
+                string stereoOut = r.stereotype;
+
+                // Se for relator e não houver estereótipo, assume mediation
+                if (c.stereotype == "relator" && stereoOut.empty()) {
+                    stereoOut = "mediation";
                 }
-            }
 
-            // Atributos
-            if (!classes.attributes.empty()) {
-                relatorioFile << (isLastClass ? "   ├─ Atributos: " : "   │─ Atributos: ");
-                for (const auto& at : classes.attributes) relatorioFile << at << ", ";
+                relatorioFile << "- source: " << c.name
+                            << " --(@" << stereoOut << ")--> "
+                            << r.targetClass;
+
+                if (!r.name.empty())
+                    relatorioFile << " | name: " << r.name;
+
+                if (!r.sourceCardinality.empty() || !r.targetCardinality.empty())
+                    relatorioFile << " | card: "
+                                << r.sourceCardinality << ".."
+                                << r.targetCardinality;
+
                 relatorioFile << endl;
             }
         }
 
-        // Gensets
+
+        // GENSETS
         if (!pacote.gensets.empty()) {
-            relatorioFile << "   └─ Gensets:" << endl;
+            relatorioFile << "\n[GENSETS]" << endl;
             for (const auto& gs : pacote.gensets) {
-                relatorioFile << "       * " << gs.name << endl;
-                relatorioFile << "         - General: " << gs.general << endl;
-                relatorioFile << "         - Specifics: ";
-                for (size_t i = 0; i < gs.specifics.size(); ++i) {
-                    relatorioFile << gs.specifics[i] << (i < gs.specifics.size() - 1 ? ", " : "");
+                relatorioFile << "- " << gs.name << endl;
+                relatorioFile << "  general   : " << gs.general << endl;
+                relatorioFile << "  specifics : ";
+                for (size_t i = 0; i < gs.specifics.size(); ++i)
+                    relatorioFile << gs.specifics[i]
+                                  << (i < gs.specifics.size() - 1 ? ", " : "");
+                relatorioFile << endl;
+
+                relatorioFile << "  modifiers : ";
+                if (gs.modifiers.empty()) {
+                    relatorioFile << "(none)";
+                } else {
+                    for (size_t i = 0; i < gs.modifiers.size(); ++i)
+                        relatorioFile << gs.modifiers[i]
+                                      << (i < gs.modifiers.size() - 1 ? ", " : "");
                 }
                 relatorioFile << endl;
             }
         }
 
-        // Enums
+        // ENUMS
         if (!pacote.enums.empty()) {
-            relatorioFile << "   └─ Enums:" << endl;
+            relatorioFile << "\n[ENUMS]" << endl;
             for (const auto& en : pacote.enums) {
-                relatorioFile << "       * " << en.name << ": ";
-                for (size_t i = 0; i < en.literals.size(); ++i) {
-                    relatorioFile << en.literals[i] << (i < en.literals.size() - 1 ? ", " : "");
-                }
+                relatorioFile << "- " << en.name << ": ";
+                for (size_t i = 0; i < en.literals.size(); ++i)
+                    relatorioFile << en.literals[i]
+                                  << (i < en.literals.size() - 1 ? ", " : "");
                 relatorioFile << endl;
             }
         }
 
-        // Relações externas
+        // RELAÇÕES EXTERNAS
         if (!pacote.relacoesExternas.empty()) {
-            relatorioFile << "   └─ Relações Externas:" << endl;
+            relatorioFile << "\n[RELAÇÕES EXTERNAS]" << endl;
             for (const auto& rel : pacote.relacoesExternas) {
-                relatorioFile << "       * ";
-                if (!rel.stereotype.empty()) relatorioFile << "(@" << rel.stereotype << ") ";
-                relatorioFile << rel.details << endl;
+                relatorioFile << "- (@" << rel.stereotype << ") "
+                              << rel.details << endl;
             }
         }
     }
 
     relatorioFile.close();
 }
+
 
 
