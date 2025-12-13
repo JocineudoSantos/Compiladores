@@ -1,0 +1,13 @@
+=============================================
+        RELATÓRIO DE ANÁLISE SEMÂNTICA
+=============================================
+
+[PADRÕES IDENTIFICADOS]
+- [OK] Role Pattern (Organization -> CorporateCustomer)
+- [OK] Role Pattern (Person -> Employee)
+- [OK] Role Pattern (Person -> PersonalCustomer)
+- [OK] Phase Pattern (Person)
+
+[ERROS / AVISOS]
+- Nenhum erro ou aviso encontrado.
+

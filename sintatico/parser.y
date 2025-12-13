@@ -38,7 +38,7 @@ struct ClassInfo {
     vector<string> parents;
     vector<string> attributes;
     vector<InternalRelationInformacoes> internalRelations;
-     string comment;  // Opcional, para armazenar notas sobre a classe
+    string comment;  // Opcional, para armazenar notas sobre a classe
 };
 
 struct GensetInfo {
