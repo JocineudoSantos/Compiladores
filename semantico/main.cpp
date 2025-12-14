@@ -11,19 +11,14 @@ static string trim(string s) {
     return s;
 }
 
-void gerar_relatorio_semantico(
-    const Sintese& sintese,
-    const vector<string>& padroes,
-    const vector<string>& erros,
-    const string& caminho_saida
-) {
+void gerar_relatorio_semantico(const Sintese& sintese, const vector<string>& padroes, const vector<string>& erros, const string& caminho_saida) {
+   
     ofstream out(caminho_saida);
 
-    out << "=============================================\n";
+    out << "---------------------------------------------\n";
     out << "        RELATÓRIO DE ANÁLISE SEMÂNTICA\n";
-    out << "=============================================\n\n";
+    out << "---------------------------------------------\n\n";
 
-    // ================= PADRÕES =================
     out << "[PADRÕES IDENTIFICADOS]\n";
     if (padroes.empty()) {
         out << "- Nenhum padrão identificado.\n";
@@ -34,7 +29,6 @@ void gerar_relatorio_semantico(
 
     out << "\n";
 
-    // ================= ERROS / AVISOS =================
     out << "[ERROS / AVISOS]\n";
     if (erros.empty()) {
         out << "- Nenhum erro ou aviso encontrado.\n";
@@ -67,13 +61,13 @@ Sintese ler_relatorio(const string& caminho) {
             continue;
         }
 
-        // ================= CLASSES =================
+        // CLASSES
        if (secao == "[CLASSES]" && line[0] == '-') {
 
         Classe c;
 
         // Exemplo de linha:
-        // - Employee (stereotype=role) | parents: Person
+        // Employee (stereotype=role) | parents: Person
 
         size_t p1 = line.find('(');
         size_t p2 = line.find(')');
@@ -87,7 +81,7 @@ Sintese ler_relatorio(const string& caminho) {
             inside.substr(inside.find('=') + 1)
         );
 
-        // Parents (opcional)
+        // Parents
         size_t parentsPos = line.find("parents:");
         if (parentsPos != string::npos) {
             string parentsStr = line.substr(parentsPos + 8);
@@ -102,7 +96,6 @@ Sintese ler_relatorio(const string& caminho) {
         s.classes[c.nome] = c;
         }
 
-        // ================= RELAÇÕES INTERNAS =================
         else if (secao == "[RELAÇÕES INTERNAS]" && line[0] == '-') {
 
             size_t sPos = line.find("source:");
@@ -127,7 +120,6 @@ Sintese ler_relatorio(const string& caminho) {
             );
         }
 
-        // ================= GENSETS =================
         else if (secao == "[GENSETS]") {
 
             if (line[0] == '-') {

@@ -9,7 +9,7 @@
 
 using namespace std;
 
-// ================= RELAÇÕES =================
+// ESTRUTURAS DE DADOS
 struct RelacaoInterna {
     vector<string> stereotypes;
     string target;
@@ -21,7 +21,6 @@ struct RelacaoExterna {
     string target;
 };
 
-// ================= CLASSES =================
 struct Classe {
     string nome;
     string estereotipo;
@@ -29,7 +28,7 @@ struct Classe {
     vector<RelacaoInterna> relacoes_internas;
 };
 
-// ================= GENSETS =================
+// GENSETS
 struct Genset {
     string nome;
     string general;
@@ -37,17 +36,14 @@ struct Genset {
     vector<string> modifiers;
 };
 
-// ================= SÍNTESE =================
 struct Sintese {
     map<string, Classe> classes;
     vector<Genset> generalizacoes;
     vector<RelacaoExterna> relacoes_externas;
 };
 
-// ================= SEMÂNTICO =================
+// FUNÇÕES UTILITÁRIAS 
 pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese);
-
-// ================= FUNÇÕES UTILITÁRIAS =================
 bool contem(const vector<string>& v, const string& s);
 string limpaStereo(string s);
 

@@ -25,9 +25,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
     const auto& gensets = sintese.generalizacoes;
     const auto& relacoes_externas = sintese.relacoes_externas;
 
-    // =========================================================================
     // 1. SUBKIND PATTERN
-    // =========================================================================
     map<string, vector<string>> subkindsPorGeneral;
 
     for (const auto& [nomeClasse, classe] : classes) {
@@ -38,7 +36,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         }
     }
 
-    // 2. Validar cada subkind
+    // Validar cada subkind
     for (const auto& [nomeClasse, classe] : classes) {
 
     if (classe.estereotipo != "subkind") continue;
@@ -52,7 +50,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         continue;
     }
 
-    // Pai deve ser rígido (kind ou subkind)
+    // Pai deve ser kind ou subkind
     bool paiRigido = false;
     for (const auto& pai : classe.parents) {
         auto itPai = classes.find(pai);
@@ -71,7 +69,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         continue;
     }
 
-    // 3. Verifica se o general tem múltiplos subkinds
+    // Verifica se o general tem múltiplos subkinds
     bool precisaDeGenset = false;
     for (const auto& pai : classe.parents) {
         if (subkindsPorGeneral[pai].size() >= 2) {
@@ -79,7 +77,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         }
     }
 
-    // 4. Se precisa, verifica participação em genset
+    // Se precisa, verifica participação em genset
     if (precisaDeGenset) {
         bool participaDeGenset = false;
         for (const auto& g : gensets) {
@@ -98,22 +96,19 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         }
     }
 
-    // 5. Padrão identificado
+    // Padrão identificado
     padroes_identificados.push_back(
         "[OK] Subkind Pattern (" + nomeClasse + ")"
     );
     }   
 
-
-    // =========================================================================
     // 2. ROLE PATTERN
-    // =========================================================================
     for (const auto& [nomeClasse, classe] : classes) {
 
-    // 1. Só analisa roles
+    // Só analisa roles
     if (classe.estereotipo != "role") continue;
 
-    // 2. Deve herdar de alguém
+    // Deve herdar de alguém
     if (classe.parents.empty()) {
         erros.push_back(
             "[Role Pattern] '" + nomeClasse +
@@ -122,7 +117,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         continue;
     }
 
-    // 3. Pai deve ser Kind ou Role
+    // Pai deve ser Kind ou Role
     bool paiValido = false;
     for (const auto& pai : classe.parents) {
         auto itPai = classes.find(pai);
@@ -141,7 +136,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         continue;
     }
 
-    // 4. Role DEVE participar de um genset
+    // Role DEVE participar de um genset
     bool participaDeGenset = false;
     for (const auto& g : gensets) {
         if (contem(g.specifics, nomeClasse)) {
@@ -158,15 +153,13 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         continue;
     }
 
-    // 5. Padrão identificado
+    // Padrão identificado
     padroes_identificados.push_back(
         "[OK] Role Pattern (" + nomeClasse + ")"
     );
-}
+    }
 
-    // =========================================================================
     // 3. PHASE PATTERN
-    // =========================================================================
     for (const auto& [nomeClasse, classe] : classes) {
 
     if (classe.estereotipo != "relator") continue;
@@ -207,20 +200,18 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
             "[OK] Relator Pattern (" + nomeClasse + ")"
         );
     }
- }
+    }
 
-    // =========================================================================
     // 5. MODE PATTERN
-    // =========================================================================
     for (const auto& [nomeClasse, classe] : classes) {
 
-    // 1. Só analisa mode
+    // Só analisa mode
     if (classe.estereotipo != "mode") continue;
 
     bool temCharacterization = false;
     bool temExternalDependence = false;
 
-    // 2. Verifica relações obrigatórias
+    // Verifica relações obrigatórias
     for (const auto& rel : classe.relacoes_internas) {
         for (auto s : rel.stereotypes) {
             s = limpaStereo(s);
@@ -229,7 +220,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         }
     }
 
-    // 3. Erros obrigatórios
+    // Erros obrigatórios
     if (!temCharacterization) {
         erros.push_back(
             "[Mode Pattern] '" + nomeClasse +
@@ -244,7 +235,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         );
     }
 
-    // 4. Só é OK se tiver as duas
+    // Só é OK se tiver as duas
     if (temCharacterization && temExternalDependence) {
         padroes_identificados.push_back(
             "[OK] Mode Pattern (" + nomeClasse + ")"
@@ -252,17 +243,15 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
     }
    }
 
-    // =========================================================================
-    // 6. ROLE MIXIN PATTERN
-    // =========================================================================
+    // ROLE MIXIN PATTERN
     for (const auto& [nomeClasse, classe] : classes) {
 
-    // 1. Só analisa roleMixin
+    // Só analisa roleMixin
     if (classe.estereotipo != "roleMixin") continue;
 
     const Genset* gensetEncontrado = nullptr;
 
-    // 2. Procurar genset onde ele é o general
+    // Procurar genset onde ele é o general
     for (const auto& g : gensets) {
         if (g.general == nomeClasse) {
             gensetEncontrado = &g;
@@ -270,7 +259,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         }
     }
 
-    // 3. Deve ser general de um genset
+    // Deve ser general de um genset
     if (!gensetEncontrado) {
         erros.push_back(
             "[RoleMixin Pattern] '" + nomeClasse +
@@ -279,7 +268,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         continue;
     }
 
-    // 4. Genset deve ser disjoint e complete
+    // Genset deve ser disjoint e complete
     bool isDisjoint  = contem(gensetEncontrado->modifiers, "disjoint");
     bool isComplete  = contem(gensetEncontrado->modifiers, "complete");
 
@@ -291,7 +280,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
         continue;
     }
 
-    // 5. Todas as específicas devem ser role
+    // Todas as específicas devem ser role
     bool todasSaoRoles = true;
     for (const auto& spec : gensetEncontrado->specifics) {
         auto itSpec = classes.find(spec);
@@ -308,7 +297,7 @@ pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese)
 
     if (!todasSaoRoles) continue;
 
-    // 6. Padrão identificado com sucesso
+    // Padrão identificado com sucesso
     padroes_identificados.push_back(
         "[OK] RoleMixin Pattern (" + nomeClasse + ")"
     );
