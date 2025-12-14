@@ -71,7 +71,7 @@ O analisador sintático deve verificar a corretude da especificação textual de
 2. Coutinho, M. L., Almeida, J. P. A., Sales, T. P., & Guizzardi, G. (2024). *A Textual Syntax and Toolset for Well-Founded Ontologies*. FOIS 2024, 208-222.  
 3. Lenke, M. *Tonto: A Textual Syntax for OntoUML*. [https://matheuslenke.github.io/tonto-docs/](https://matheuslenke.github.io/tonto-docs/)
    
-##PREPARACAO DO AMBIENTE:
+## PREPARACAO DO AMBIENTE:
 ```bash
 sudo apt update
 sudo apt upgrade 
