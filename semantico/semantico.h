@@ -28,7 +28,6 @@ struct Classe {
     vector<RelacaoInterna> relacoes_internas;
 };
 
-// GENSETS
 struct Genset {
     string nome;
     string general;
@@ -36,14 +35,18 @@ struct Genset {
     vector<string> modifiers;
 };
 
-struct Sintese {
+struct SintesePacote {
     map<string, Classe> classes;
     vector<Genset> generalizacoes;
     vector<RelacaoExterna> relacoes_externas;
 };
 
+struct Sintese {
+    map<string, SintesePacote> pacotes; // chave = nome do package
+};
+
 // FUNÇÕES UTILITÁRIAS 
-pair<vector<string>, vector<string>> verificar_semantica(const Sintese& sintese);
+map<string, pair<vector<string>, vector<string>>> verificar_semantica_por_pacote(const Sintese& sintese);
 bool contem(const vector<string>& v, const string& s);
 string limpaStereo(string s);
 

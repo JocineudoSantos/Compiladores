@@ -11,41 +11,75 @@ static string trim(string s) {
     return s;
 }
 
-void gerar_relatorio_semantico(const Sintese& sintese, const vector<string>& padroes, const vector<string>& erros, const string& caminho_saida) {
-   
+void gerar_relatorio_semantico(
+    const Sintese& sintese,
+    const vector<string>& padroes,
+    const vector<string>& incompletos,
+    const string& caminho_saida
+) {
     ofstream out(caminho_saida);
 
     out << "---------------------------------------------\n";
     out << "        RELATÓRIO DE ANÁLISE SEMÂNTICA\n";
     out << "---------------------------------------------\n\n";
 
-    out << "[PADRÕES IDENTIFICADOS]\n";
-    if (padroes.empty()) {
-        out << "- Nenhum padrão identificado.\n";
-    } else {
-        for (const auto& p : padroes)
-            out << "- " << p << "\n";
+    for (const auto& [nomePacote, _] : sintese.pacotes) {
+
+        out << "---------------------------------------------\n";
+        out << "PACOTE: " <<nomePacote << "\n";              // <<<< sem "PACOTE:"
+        out << "---------------------------------------------\n\n";
+
+        out << "[PADRÕES COMPLETOS IDENTIFICADOS]\n";
+        bool achouPadrao = false;
+
+        for (const auto& p : padroes) {
+            if (p.find("[" + nomePacote + "]") != string::npos) {
+                string padraoSemPacote = p.substr(p.find("]") + 2);
+                out << "- " << padraoSemPacote << "\n";
+                achouPadrao = true;
+            }
+        }
+
+        if (!achouPadrao) {
+            out << "- Nenhum padrão identificado neste pacote.\n";
+        }
+
+        out << "\n";
+
+        out << "[PADRÕES INCOMPLETOS]\n";
+        bool achouProblema = false;
+
+        for (const auto& e : incompletos) {
+            if (e.find("[" + nomePacote + "]") != string::npos) {
+                string erroSemPacote = e.substr(e.find("]") + 2);
+                out << "- " << erroSemPacote << "\n";
+                achouProblema = true;
+            }
+        }
+
+        if (!achouProblema) {
+            out << "- Nenhum problema encontrado neste pacote.\n";
+        }
+
+        out << "\n";
     }
 
-    out << "\n";
-
-    out << "[ERROS / AVISOS]\n";
-    if (erros.empty()) {
-        out << "- Nenhum erro ou aviso encontrado.\n";
-    } else {
-        for (const auto& e : erros)
-            out << "- " << e << "\n";
-    }
-
-    out << "\n";
     out.close();
 }
 
+
+
+
 Sintese ler_relatorio(const string& caminho) {
 
-    Sintese s;
+    Sintese sintese;
+
     ifstream file(caminho);
-    string line, secao;
+    if (!file.is_open()) return sintese;
+
+    string line;
+    string pacoteAtual;
+    string secaoAtual;
 
     Genset genset;
     bool lendoGenset = false;
@@ -55,97 +89,103 @@ Sintese ler_relatorio(const string& caminho) {
         line = trim(line);
         if (line.empty()) continue;
 
-        // detectar seção
-        if (line[0] == '[') {
-            secao = line;
+        // ================= PACOTE =================
+        if (line.rfind("PACOTE:", 0) == 0) {
+            pacoteAtual = trim(line.substr(7));
+            sintese.pacotes[pacoteAtual]; // cria pacote se não existir
+            secaoAtual.clear();
             continue;
         }
 
-        // CLASSES
-       if (secao == "[CLASSES]" && line[0] == '-') {
+        // ================= SEÇÃO =================
+        if (line[0] == '[') {
+            secaoAtual = line;
+            continue;
+        }
 
-        Classe c;
+        // ================= CLASSES =================
+        if (secaoAtual == "[CLASSES]" && line[0] == '-') {
 
-        // Exemplo de linha:
-        // Employee (stereotype=role) | parents: Person
+            // - Nome (stereotype=kind) | parents: A, B
+            size_t pNomeFim = line.find('(');
+            string nomeClasse = trim(line.substr(2, pNomeFim - 2));
 
-        size_t p1 = line.find('(');
-        size_t p2 = line.find(')');
+            size_t pStereoIni = line.find("stereotype=");
+            size_t pStereoFim = line.find(')', pStereoIni);
+            string estereotipo = line.substr(
+                pStereoIni + 11,
+                pStereoFim - (pStereoIni + 11)
+            );
 
-        // Nome da classe
-        c.nome = trim(line.substr(2, p1 - 2));
+            Classe& c = sintese.pacotes[pacoteAtual].classes[nomeClasse];
+            c.estereotipo = estereotipo;
 
-        // Estereótipo
-        string inside = line.substr(p1 + 1, p2 - p1 - 1);
-        c.estereotipo = trim(
-            inside.substr(inside.find('=') + 1)
-        );
-
-        // Parents
-        size_t parentsPos = line.find("parents:");
-        if (parentsPos != string::npos) {
-            string parentsStr = line.substr(parentsPos + 8);
-            stringstream ss(parentsStr);
-            string pai;
-            while (getline(ss, pai, ',')) {
-                c.parents.push_back(trim(pai));
+            // Parents (opcional)
+            size_t pParents = line.find("parents:");
+            if (pParents != string::npos) {
+                string lista = line.substr(pParents + 8);
+                stringstream ss(lista);
+                string pai;
+                while (getline(ss, pai, ',')) {
+                    c.parents.push_back(trim(pai));
+                }
             }
         }
 
-        // Salva no mapa
-        s.classes[c.nome] = c;
-        }
+        // ================= RELAÇÕES INTERNAS =================
+        else if (secaoAtual == "[RELAÇÕES INTERNAS]" && line[0] == '-') {
 
-        else if (secao == "[RELAÇÕES INTERNAS]" && line[0] == '-') {
+            // - source: A --(@mediation)--> B
+            size_t pSource = line.find("source:");
+            size_t pArrow = line.find("-->");
+            size_t pStereo = line.find("(@");
 
-            size_t sPos = line.find("source:");
-            size_t ster = line.find("(@");
-            size_t arrow = line.find("-->");
+            if (pSource == string::npos || pArrow == string::npos) continue;
 
-            if (sPos == string::npos || arrow == string::npos) continue;
+            string source = trim(line.substr(pSource + 7, pStereo - (pSource + 7)));
+            string target = trim(line.substr(pArrow + 3));
 
-            string source = trim(line.substr(sPos + 7, ster - (sPos + 7)));
-            string target = trim(line.substr(arrow + 3));
-
-            string stereo = "";
-            if (ster != string::npos) {
+            string stereo;
+            if (pStereo != string::npos) {
                 stereo = line.substr(
-                    ster + 2,
-                    line.find(")") - (ster + 2)
+                    pStereo + 2,
+                    line.find(")", pStereo) - (pStereo + 2)
                 );
             }
 
-            s.classes[source].relacoes_internas.push_back(
-                {{stereo}, target}
-            );
+            RelacaoInterna r;
+            r.target = target;
+            if (!stereo.empty())
+                r.stereotypes.push_back(stereo);
+
+            sintese.pacotes[pacoteAtual]
+                .classes[source]
+                .relacoes_internas
+                .push_back(r);
         }
 
-        else if (secao == "[GENSETS]") {
+        // ================= GENSETS =================
+        else if (secaoAtual == "[GENSETS]") {
 
             if (line[0] == '-') {
-                if (lendoGenset)
-                    s.generalizacoes.push_back(genset);
-
+                if (lendoGenset) {
+                    sintese.pacotes[pacoteAtual].generalizacoes.push_back(genset);
+                }
                 genset = Genset{};
                 genset.nome = trim(line.substr(2));
                 lendoGenset = true;
             }
             else if (line.find("general") != string::npos) {
-                genset.general =
-                    trim(line.substr(line.find(':') + 1));
+                genset.general = trim(line.substr(line.find(':') + 1));
             }
             else if (line.find("specifics") != string::npos) {
-                stringstream ss(
-                    line.substr(line.find(':') + 1)
-                );
+                stringstream ss(line.substr(line.find(':') + 1));
                 string x;
                 while (getline(ss, x, ','))
                     genset.specifics.push_back(trim(x));
             }
             else if (line.find("modifiers") != string::npos) {
-                stringstream ss(
-                    line.substr(line.find(':') + 1)
-                );
+                stringstream ss(line.substr(line.find(':') + 1));
                 string x;
                 while (getline(ss, x, ','))
                     genset.modifiers.push_back(trim(x));
@@ -153,29 +193,40 @@ Sintese ler_relatorio(const string& caminho) {
         }
     }
 
-    if (lendoGenset)
-        s.generalizacoes.push_back(genset);
+    if (lendoGenset && !pacoteAtual.empty()) {
+        sintese.pacotes[pacoteAtual].generalizacoes.push_back(genset);
+    }
 
-    return s;
+    return sintese;
 }
-
 int main() {
 
     Sintese sintese = ler_relatorio("testes/teste2_Syntax_analysis.txt");
 
-    auto [padroes, erros] = verificar_semantica(sintese);
+    auto resultados_por_pacote = verificar_semantica_por_pacote(sintese);
 
-   gerar_relatorio_semantico(
+    vector<string> padroes;
+    vector<string> incompletos;
+
+    for (const auto& [nomePacote, resultado] : resultados_por_pacote) {
+
+        for (const auto& p : resultado.first)
+            padroes.push_back("[" + nomePacote + "] " + p);
+
+        for (const auto& e : resultado.second)
+            incompletos.push_back("[" + nomePacote + "] " + e);
+    }
+
+    gerar_relatorio_semantico(
         sintese,
         padroes,
-        erros,
+        incompletos,
         "output/relatorio_semantico.txt"
     );
 
     cout << "Relatório semântico gerado com sucesso.\n";
-
-
     return 0;
 }
+
 
 
