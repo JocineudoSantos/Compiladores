@@ -1,4 +1,4 @@
-# Analisador Sintático para Textual Ontology Language (TONTO)
+# Analisador Semântico para Textual Ontology Language (TONTO)
 
 ## UNIVERSIDADE FEDERAL RURAL DO SEMI-ÁRIDO (UFERSA)
 **Centro de Ciências Exatas e Naturais (CCEN)**  
@@ -116,5 +116,6 @@ E utilizar em um arquivo, considerando que esteja na pasta compiladores/semantic
 O arquivo sera gerado na pasta output, lembrando que como nosso sintático junta os arquivos numa
 análise completa, há apenas um arquivo na entrada do semântico (contendo todos os conteúdos dos arquivos de teste)
 ```
+
 
 
