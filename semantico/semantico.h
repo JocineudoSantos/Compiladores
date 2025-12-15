@@ -13,12 +13,14 @@ using namespace std;
 struct RelacaoInterna {
     vector<string> stereotypes;
     string target;
+    int linha;
 };
 
 struct RelacaoExterna {
     vector<string> stereotypes;
     string source;
     string target;
+    int linha;
 };
 
 struct Classe {
@@ -26,6 +28,7 @@ struct Classe {
     string estereotipo;
     vector<string> parents; 
     vector<RelacaoInterna> relacoes_internas;
+    int linha;
 };
 
 struct Genset {
@@ -33,6 +36,7 @@ struct Genset {
     string general;
     vector<string> specifics;
     vector<string> modifiers;
+    int linha;
 };
 
 struct SintesePacote {

@@ -26,7 +26,7 @@ void gerar_relatorio_semantico(
     for (const auto& [nomePacote, _] : sintese.pacotes) {
 
         out << "---------------------------------------------\n";
-        out << "PACOTE: " <<nomePacote << "\n";              // <<<< sem "PACOTE:"
+        out << "PACOTE: " << nomePacote << "\n";
         out << "---------------------------------------------\n\n";
 
         out << "[PADRÕES COMPLETOS IDENTIFICADOS]\n";
@@ -34,8 +34,19 @@ void gerar_relatorio_semantico(
 
         for (const auto& p : padroes) {
             if (p.find("[" + nomePacote + "]") != string::npos) {
-                string padraoSemPacote = p.substr(p.find("]") + 2);
-                out << "- " << padraoSemPacote << "\n";
+
+                string msg = p.substr(p.find("]") + 2);
+
+                size_t posLinha = msg.find("(linha");
+                if (posLinha != string::npos) {
+                    string linha = msg.substr(posLinha);
+                    msg = msg.substr(0, posLinha);
+                    out << "- [" << linha.substr(1, linha.size() - 2) << "] "
+                        << msg << "\n";
+                } else {
+                    out << "- " << msg << "\n";
+                }
+
                 achouPadrao = true;
             }
         }
@@ -46,13 +57,24 @@ void gerar_relatorio_semantico(
 
         out << "\n";
 
-        out << "[PADRÕES INCOMPLETOS]\n";
+        out << "[PADRÕES INCOMPLETOS IDENTIFICADOS]\n";
         bool achouProblema = false;
 
         for (const auto& e : incompletos) {
             if (e.find("[" + nomePacote + "]") != string::npos) {
-                string erroSemPacote = e.substr(e.find("]") + 2);
-                out << "- " << erroSemPacote << "\n";
+
+                string msg = e.substr(e.find("]") + 2);
+
+                size_t posLinha = msg.find("(linha");
+                if (posLinha != string::npos) {
+                    string linha = msg.substr(posLinha);
+                    msg = msg.substr(0, posLinha);
+                    out << "- [" << linha.substr(1, linha.size() - 2) << "] "
+                        << msg << "\n";
+                } else {
+                    out << "- " << msg << "\n";
+                }
+
                 achouProblema = true;
             }
         }
@@ -68,8 +90,6 @@ void gerar_relatorio_semantico(
 }
 
 
-
-
 Sintese ler_relatorio(const string& caminho) {
 
     Sintese sintese;
@@ -83,27 +103,28 @@ Sintese ler_relatorio(const string& caminho) {
 
     Genset genset;
     bool lendoGenset = false;
+    int linhaAtual = 0;
 
     while (getline(file, line)) {
 
+        linhaAtual++;     
         line = trim(line);
         if (line.empty()) continue;
 
-        // ================= PACOTE =================
+        // PACOTE
         if (line.rfind("PACOTE:", 0) == 0) {
             pacoteAtual = trim(line.substr(7));
-            sintese.pacotes[pacoteAtual]; // cria pacote se não existir
+            sintese.pacotes[pacoteAtual];
             secaoAtual.clear();
             continue;
         }
-
-        // ================= SEÇÃO =================
+        // SEÇÃO
         if (line[0] == '[') {
             secaoAtual = line;
             continue;
         }
 
-        // ================= CLASSES =================
+        // CLASSES
         if (secaoAtual == "[CLASSES]" && line[0] == '-') {
 
             // - Nome (stereotype=kind) | parents: A, B
@@ -119,8 +140,8 @@ Sintese ler_relatorio(const string& caminho) {
 
             Classe& c = sintese.pacotes[pacoteAtual].classes[nomeClasse];
             c.estereotipo = estereotipo;
+            c.linha = linhaAtual; 
 
-            // Parents (opcional)
             size_t pParents = line.find("parents:");
             if (pParents != string::npos) {
                 string lista = line.substr(pParents + 8);
@@ -132,7 +153,7 @@ Sintese ler_relatorio(const string& caminho) {
             }
         }
 
-        // ================= RELAÇÕES INTERNAS =================
+        // RELAÇÕES INTERNAS
         else if (secaoAtual == "[RELAÇÕES INTERNAS]" && line[0] == '-') {
 
             // - source: A --(@mediation)--> B
@@ -155,6 +176,8 @@ Sintese ler_relatorio(const string& caminho) {
 
             RelacaoInterna r;
             r.target = target;
+            r.linha = linhaAtual; 
+
             if (!stereo.empty())
                 r.stereotypes.push_back(stereo);
 
@@ -164,7 +187,7 @@ Sintese ler_relatorio(const string& caminho) {
                 .push_back(r);
         }
 
-        // ================= GENSETS =================
+        // GENSETS
         else if (secaoAtual == "[GENSETS]") {
 
             if (line[0] == '-') {
@@ -173,6 +196,7 @@ Sintese ler_relatorio(const string& caminho) {
                 }
                 genset = Genset{};
                 genset.nome = trim(line.substr(2));
+                genset.linha = linhaAtual;
                 lendoGenset = true;
             }
             else if (line.find("general") != string::npos) {
@@ -199,6 +223,7 @@ Sintese ler_relatorio(const string& caminho) {
 
     return sintese;
 }
+
 int main(int argc, char* argv[]) {
 
     if (argc < 2) {

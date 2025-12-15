@@ -19,3 +19,16 @@ enum Tipo_De_Vacina {
 }
 //=============================================
 
+//=============================================
+// RELACOES ENTRE PACIENTE, ENFERMEIRO E VACINA
+
+@material relation Enfermeiro [1..*] -- verifica -- [1..*] Vacina
+@material relation Paciente [1..*] -- vacinado_Por -- [1..*] Enfermeiro
+@material relation Paciente [1..*] -- imunizado_Com -- [1..*] Vacina
+
+relator Vacinacao {
+    @mediation [1..*] -- [1] Enfermeiro
+    @mediation [1..*] -- [1] Paciente
+    @mediation [1..*] -- [1..*] Vacina
+}
+//=============================================

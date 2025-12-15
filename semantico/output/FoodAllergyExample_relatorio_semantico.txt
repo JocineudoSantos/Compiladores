@@ -7,40 +7,40 @@ PACOTE: alergiaalimentar
 ---------------------------------------------
 
 [PADRÕES COMPLETOS IDENTIFICADOS]
-- [OK] Subkind Pattern (Aditivo_Alimentar)
-- [OK] Subkind Pattern (Carboidrato)
-- [OK] Subkind Pattern (Formula)
-- [OK] Subkind Pattern (Ingrediente)
-- [OK] Subkind Pattern (Proteina)
-- [OK] Subkind Pattern (Teste_Cutaneo)
-- [OK] Subkind Pattern (Teste_de_Dosagem_IgE_Serica)
-- [OK] Subkind Pattern (Teste_de_Provocacao_Oral)
-- [OK] Role Pattern (Alergeno)
+- [Linha 16] [OK] Subkind Pattern (Aditivo_Alimentar)
+- [Linha 17] [OK] Subkind Pattern (Carboidrato)
+- [Linha 31] [OK] Subkind Pattern (Formula)
+- [Linha 30] [OK] Subkind Pattern (Ingrediente)
+- [Linha 13] [OK] Subkind Pattern (Proteina)
+- [Linha 45] [OK] Subkind Pattern (Teste_Cutaneo)
+- [Linha 32] [OK] Subkind Pattern (Teste_de_Dosagem_IgE_Serica)
+- [Linha 33] [OK] Subkind Pattern (Teste_de_Provocacao_Oral)
+- [Linha 25] [OK] Role Pattern (Alergeno)
 
-[PADRÕES INCOMPLETOS]
-- [Subkind Pattern] 'Cutaneo' deve especializar um Kind ou Subkind.
-- [Subkind Pattern] 'Dieta_de_Exclusao' deve especializar um Kind ou Subkind.
-- [Subkind Pattern] 'Gastrointestinal' deve especializar um Kind ou Subkind.
-- [Subkind Pattern] 'Imuno_Mediada' deve especializar um Kind ou Subkind.
-- [Subkind Pattern] 'Imunoterapia_Oral' deve especializar um Kind ou Subkind.
-- [Subkind Pattern] 'Medicamento' deve especializar um Kind ou Subkind.
-- [Subkind Pattern] 'Mista' deve especializar um Kind ou Subkind.
-- [Subkind Pattern] 'Nao_Imuno_Mediada' deve especializar um Kind ou Subkind.
-- [Subkind Pattern] 'Respiratorio' deve especializar um Kind ou Subkind.
-- [Subkind Pattern] 'Sistemico' deve especializar um Kind ou Subkind.
-- [Phase Pattern] Genset 'disjoint_complete' deve ser marcado como disjoint.
-- [Phase Pattern] Classe geral 'Alergia' deve ser estereotipada como kind ou phase.
-- [Phase Pattern] Classe geral 'Sintoma' deve ser estereotipada como kind ou phase.
-- [Phase Pattern] Genset 'disjoint_complete' deve ser marcado como disjoint.
-- [Phase Pattern] Genset 'disjoint_complete' deve ser marcado como disjoint.
-- [Phase Pattern] Genset 'disjoint_complete' deve ser marcado como disjoint.
-- [Phase Pattern] Classe geral 'Tratamento' deve ser estereotipada como kind ou phase.
-- [Relator Pattern] O relator 'Alergia' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
-- [Relator Pattern] O relator 'Avaliacao_de_Risco' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
-- [Relator Pattern] O relator 'Diagnostico' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
-- [Relator Pattern] O relator 'Tratamento' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
-- [Mode Pattern] 'Disposicao_Alergica' deve possuir uma relação @characterization.
-- [Mode Pattern] 'Disposicao_Alergica' deve possuir uma relação @externalDependence.
-- [Mode Pattern] 'Sintoma' deve possuir uma relação @characterization.
-- [Mode Pattern] 'Sintoma' deve possuir uma relação @externalDependence.
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- [Linha 21] [Subkind Pattern] 'Cutaneo' deve especializar um Kind ou Subkind.
+- [Linha 35] [Subkind Pattern] 'Dieta_de_Exclusao' deve especializar um Kind ou Subkind.
+- [Linha 22] [Subkind Pattern] 'Gastrointestinal' deve especializar um Kind ou Subkind.
+- [Linha 18] [Subkind Pattern] 'Imuno_Mediada' deve especializar um Kind ou Subkind.
+- [Linha 37] [Subkind Pattern] 'Imunoterapia_Oral' deve especializar um Kind ou Subkind.
+- [Linha 36] [Subkind Pattern] 'Medicamento' deve especializar um Kind ou Subkind.
+- [Linha 28] [Subkind Pattern] 'Mista' deve especializar um Kind ou Subkind.
+- [Linha 19] [Subkind Pattern] 'Nao_Imuno_Mediada' deve especializar um Kind ou Subkind.
+- [Linha 23] [Subkind Pattern] 'Respiratorio' deve especializar um Kind ou Subkind.
+- [Linha 24] [Subkind Pattern] 'Sistemico' deve especializar um Kind ou Subkind.
+- [Linha 54] [Phase Pattern] Genset 'disjoint_complete' deve ser marcado como disjoint.
+- [Linha 58] [Phase Pattern] Classe geral 'Alergia' deve ser estereotipada como kind ou phase.
+- [Linha 62] [Phase Pattern] Classe geral 'Sintoma' deve ser estereotipada como kind ou phase.
+- [Linha 66] [Phase Pattern] Genset 'disjoint_complete' deve ser marcado como disjoint.
+- [Linha 70] [Phase Pattern] Genset 'disjoint_complete' deve ser marcado como disjoint.
+- [Linha 74] [Phase Pattern] Genset 'disjoint_complete' deve ser marcado como disjoint.
+- [Linha 78] [Phase Pattern] Classe geral 'Tratamento' deve ser estereotipada como kind ou phase.
+- [Linha 41] [Relator Pattern] O relator 'Alergia' deve possuir pelo menos 2 mediações (@mediation) válidas.
+- [Linha 48] [Relator Pattern] O relator 'Avaliacao_de_Risco' deve possuir pelo menos 2 mediações (@mediation) válidas.
+- [Linha 27] [Relator Pattern] O relator 'Diagnostico' deve possuir pelo menos 2 mediações (@mediation) válidas.
+- [Linha 26] [Relator Pattern] O relator 'Tratamento' deve possuir pelo menos 2 mediações (@mediation) válidas.
+- [Linha 46] [Mode Pattern] 'Disposicao_Alergica' deve possuir uma relação @characterization.
+- [Linha 46] [Mode Pattern] 'Disposicao_Alergica' deve possuir uma relação @externalDependence.
+- [Linha 20] [Mode Pattern] 'Sintoma' deve possuir uma relação @characterization.
+- [Linha 20] [Mode Pattern] 'Sintoma' deve possuir uma relação @externalDependence.
 

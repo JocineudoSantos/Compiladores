@@ -7,29 +7,28 @@ PACOTE: CoberturasDePizza
 ---------------------------------------------
 
 [PADRÕES COMPLETOS IDENTIFICADOS]
-- Nenhum padrão identificado neste pacote.
+- [Linha 14] [OK] Subkind Pattern (Anchova)
+- [Linha 15] [OK] Subkind Pattern (Atum)
+- [Linha 10] [OK] Subkind Pattern (Calabresa)
+- [Linha 16] [OK] Subkind Pattern (Camarao)
+- [Linha 18] [OK] Subkind Pattern (Mussarela)
+- [Linha 19] [OK] Subkind Pattern (Parmesao)
+- [Linha 11] [OK] Subkind Pattern (Presunto)
+- [Linha 12] [OK] Subkind Pattern (Salame)
 
-[PADRÕES INCOMPLETOS]
-- [Subkind Pattern] 'Anchova' deve herdar de um Kind ou outro Subkind.
-- [Subkind Pattern] 'Atum' deve herdar de um Kind ou outro Subkind.
-- [Subkind Pattern] 'Azeitona' deve herdar de um Kind ou outro Subkind.
-- [Subkind Pattern] 'Calabresa' deve herdar de um Kind ou outro Subkind.
-- [Subkind Pattern] 'Camarao' deve herdar de um Kind ou outro Subkind.
-- [Subkind Pattern] 'Mussarela' deve herdar de um Kind ou outro Subkind.
-- [Subkind Pattern] 'Parmesao' deve herdar de um Kind ou outro Subkind.
-- [Subkind Pattern] 'Pimenta' deve herdar de um Kind ou outro Subkind.
-- [Subkind Pattern] 'Presunto' deve herdar de um Kind ou outro Subkind.
-- [Subkind Pattern] 'Salame' deve herdar de um Kind ou outro Subkind.
-- [Subkind Pattern] 'Tomate' deve herdar de um Kind ou outro Subkind.
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- [Linha 21] [Subkind Pattern] 'Azeitona' especializa um general com múltiplos subkinds e deve participar de um genset.
+- [Linha 22] [Subkind Pattern] 'Pimenta' especializa um general com múltiplos subkinds e deve participar de um genset.
+- [Linha 23] [Subkind Pattern] 'Tomate' especializa um general com múltiplos subkinds e deve participar de um genset.
 
 ---------------------------------------------
 PACOTE: Empresa
 ---------------------------------------------
 
 [PADRÕES COMPLETOS IDENTIFICADOS]
-- [OK] Role Pattern (Pizzaria)
+- [Linha 52] [OK] Role Pattern (Pizzaria)
 
-[PADRÕES INCOMPLETOS]
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
 - Nenhum problema encontrado neste pacote.
 
 ---------------------------------------------
@@ -39,44 +38,45 @@ PACOTE: ItensDaPizzaria
 [PADRÕES COMPLETOS IDENTIFICADOS]
 - Nenhum padrão identificado neste pacote.
 
-[PADRÕES INCOMPLETOS]
-- [Subkind Pattern] 'Agua' especializa um general com múltiplos subkinds e deve participar de um genset.
-- [Subkind Pattern] 'Bebida' especializa um general com múltiplos subkinds e deve participar de um genset.
-- [Subkind Pattern] 'Petisco' especializa um general com múltiplos subkinds e deve participar de um genset.
-- [Subkind Pattern] 'Refrigerante' especializa um general com múltiplos subkinds e deve participar de um genset.
-- [Subkind Pattern] 'Suco' especializa um general com múltiplos subkinds e deve participar de um genset.
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- [Linha 62] [Subkind Pattern] 'Agua' especializa um general com múltiplos subkinds e deve participar de um genset.
+- [Linha 60] [Subkind Pattern] 'Bebida' especializa um general com múltiplos subkinds e deve participar de um genset.
+- [Linha 61] [Subkind Pattern] 'Petisco' especializa um general com múltiplos subkinds e deve participar de um genset.
+- [Linha 63] [Subkind Pattern] 'Refrigerante' especializa um general com múltiplos subkinds e deve participar de um genset.
+- [Linha 64] [Subkind Pattern] 'Suco' especializa um general com múltiplos subkinds e deve participar de um genset.
 
 ---------------------------------------------
 PACOTE: Pessoa
 ---------------------------------------------
 
 [PADRÕES COMPLETOS IDENTIFICADOS]
-- [OK] Role Pattern (Dono_De_Pizzaria)
-- [OK] Role Pattern (Funcionario)
+- [Linha 85] [OK] Role Pattern (Atendente)
+- [Linha 82] [OK] Role Pattern (Dono_De_Pizzaria)
+- [Linha 83] [OK] Role Pattern (Funcionario)
+- [Linha 84] [OK] Role Pattern (Pizzaiolo)
 
-[PADRÕES INCOMPLETOS]
-- [Role Pattern] 'Atendente' deve herdar de um Kind.
-- [Role Pattern] 'Pizzaiolo' deve herdar de um Kind.
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- Nenhum problema encontrado neste pacote.
 
 ---------------------------------------------
 PACOTE: Pizza
 ---------------------------------------------
 
 [PADRÕES COMPLETOS IDENTIFICADOS]
-- [OK] Subkind Pattern (Carne)
-- [OK] Subkind Pattern (Fruto_Do_Mar)
-- [OK] Subkind Pattern (Massa_Fina_e_Crocante)
-- [OK] Subkind Pattern (Massa_Pan)
-- [OK] Subkind Pattern (Queijo)
-- [OK] Subkind Pattern (Vegetal)
+- [Linha 111] [OK] Subkind Pattern (Carne)
+- [Linha 112] [OK] Subkind Pattern (Fruto_Do_Mar)
+- [Linha 108] [OK] Subkind Pattern (Massa_Fina_e_Crocante)
+- [Linha 109] [OK] Subkind Pattern (Massa_Pan)
+- [Linha 102] [OK] Subkind Pattern (Pizza) — aceito por ser subkind único (genset dispensado)
+- [Linha 113] [OK] Subkind Pattern (Queijo)
+- [Linha 114] [OK] Subkind Pattern (Vegetal)
 
-[PADRÕES INCOMPLETOS]
-- [Subkind Pattern] 'Borda_Recheada' especializa um general com múltiplos subkinds e deve participar de um genset.
-- [Subkind Pattern] 'Borda_Sem_Recheio' especializa um general com múltiplos subkinds e deve participar de um genset.
-- [Subkind Pattern] 'Pizza' deve herdar de um Kind ou outro Subkind.
-- [Relator Pattern] O relator 'Composicao_Da_Massa' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
-- [Relator Pattern] O relator 'Montagem_Da_Borda' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
-- [Relator Pattern] O relator 'Montagem_Da_Cobertura' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- [Linha 117] [Subkind Pattern] 'Borda_Recheada' especializa um general com múltiplos subkinds e deve participar de um genset.
+- [Linha 116] [Subkind Pattern] 'Borda_Sem_Recheio' especializa um general com múltiplos subkinds e deve participar de um genset.
+- [Linha 119] [Relator Pattern] O relator 'Composicao_Da_Massa' deve possuir pelo menos 2 mediações (@mediation) válidas.
+- [Linha 121] [Relator Pattern] O relator 'Montagem_Da_Borda' deve possuir pelo menos 2 mediações (@mediation) válidas.
+- [Linha 120] [Relator Pattern] O relator 'Montagem_Da_Cobertura' deve possuir pelo menos 2 mediações (@mediation) válidas.
 
 ---------------------------------------------
 PACOTE: Pizzaria
@@ -85,8 +85,8 @@ PACOTE: Pizzaria
 [PADRÕES COMPLETOS IDENTIFICADOS]
 - Nenhum padrão identificado neste pacote.
 
-[PADRÕES INCOMPLETOS]
-- [Relator Pattern] O relator 'Atendimento' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
-- [Relator Pattern] O relator 'Preparo_Da_Pizza' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
-- [Relator Pattern] O relator 'Venda_De_Alimento' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- [Linha 156] [Relator Pattern] O relator 'Atendimento' deve possuir pelo menos 2 mediações (@mediation) válidas.
+- [Linha 157] [Relator Pattern] O relator 'Preparo_Da_Pizza' deve possuir pelo menos 2 mediações (@mediation) válidas.
+- [Linha 158] [Relator Pattern] O relator 'Venda_De_Alimento' deve possuir pelo menos 2 mediações (@mediation) válidas.
 

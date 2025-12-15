@@ -72,3 +72,9 @@ PACOTE: Vacinacao
 
 [CLASSES]
 - Vacina (stereotype=kind)
+- Vacinacao (stereotype=relator)
+
+[RELAÇÕES INTERNAS]
+- source: Vacinacao --(@mediation)--> Enfermeiro | card: [1]
+- source: Vacinacao --(@mediation)--> Paciente | card: [1]
+- source: Vacinacao --(@mediation)--> Vacina | card: [1..*]

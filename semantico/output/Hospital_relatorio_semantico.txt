@@ -1,0 +1,67 @@
+---------------------------------------------
+        RELATÓRIO DE ANÁLISE SEMÂNTICA
+---------------------------------------------
+
+---------------------------------------------
+PACOTE: ConsultaMedica
+---------------------------------------------
+
+[PADRÕES COMPLETOS IDENTIFICADOS]
+- Nenhum padrão identificado neste pacote.
+
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- [Linha 10] [Relator Pattern] O relator 'Consulta_Medica' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
+
+---------------------------------------------
+PACOTE: FuncionarioDaUBS
+---------------------------------------------
+
+[PADRÕES COMPLETOS IDENTIFICADOS]
+- [Linha 22] [OK] Role Pattern (Enfermeiro)
+- [Linha 21] [OK] Role Pattern (FuncionarioDaUBS)
+- [Linha 23] [OK] Role Pattern (Medico)
+
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- Nenhum problema encontrado neste pacote.
+
+---------------------------------------------
+PACOTE: Paciente
+---------------------------------------------
+
+[PADRÕES COMPLETOS IDENTIFICADOS]
+- [Linha 40] [OK] Role Pattern (Paciente)
+
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- Nenhum problema encontrado neste pacote.
+
+---------------------------------------------
+PACOTE: Pessoa
+---------------------------------------------
+
+[PADRÕES COMPLETOS IDENTIFICADOS]
+- Nenhum padrão identificado neste pacote.
+
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- Nenhum problema encontrado neste pacote.
+
+---------------------------------------------
+PACOTE: UBS
+---------------------------------------------
+
+[PADRÕES COMPLETOS IDENTIFICADOS]
+- Nenhum padrão identificado neste pacote.
+
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- [Linha 59] [Relator Pattern] O relator 'Servico_Basico_De_Saude' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
+- [Linha 60] [Relator Pattern] O relator 'Vinculo_Empregaticio' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
+
+---------------------------------------------
+PACOTE: Vacinacao
+---------------------------------------------
+
+[PADRÕES COMPLETOS IDENTIFICADOS]
+- Nenhum padrão identificado neste pacote.
+
+[PADRÕES INCOMPLETOS IDENTIFICADOS]
+- [Linha 75] [Relator Pattern] O relator 'Vacinacao' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
+

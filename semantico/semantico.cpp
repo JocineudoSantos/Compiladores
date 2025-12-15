@@ -22,9 +22,15 @@ verificar_semantica_por_pacote(const Sintese& sintese)
 
     map<string, pair<vector<string>, vector<string>>> relatorios;
 
-    // =====================================================
+    map<string, const Classe*> classesGlobais;
+
+    for (const auto& [nomePacote, pacote] : sintese.pacotes) {
+        for (const auto& [nomeClasse, classe] : pacote.classes) {
+            classesGlobais[nomeClasse] = &classe;
+        }
+    }
+
     // PARA CADA PACOTE
-    // =====================================================
     for (const auto& [nomePacote, pacote] : sintese.pacotes) {
 
         vector<string> padroes_identificados;
@@ -33,6 +39,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
         const auto& classes = pacote.classes;
         const auto& gensets = pacote.generalizacoes;
         const auto& relacoes_externas = pacote.relacoes_externas;
+
+
 
         // 1. SUBKIND PATTERN
         map<string, vector<string>> subkindsPorGeneral;
@@ -53,7 +61,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
         // 1. Deve especializar alguém
         if (classe.parents.empty()) {
             erros.push_back(
-                "[Subkind Pattern] '" + nomeClasse +
+                "[Linha " + to_string(classe.linha) + "] "
+                + "[Subkind Pattern] '" + nomeClasse +
                 "' deve especializar um Kind ou Subkind."
             );
             continue;
@@ -61,17 +70,20 @@ verificar_semantica_por_pacote(const Sintese& sintese)
 
         // 2. Pai deve ser Kind ou Subkind
         bool paiRigido = false;
+
         for (const auto& pai : classe.parents) {
-            auto itPai = classes.find(pai);
-            if (itPai != classes.end() &&
-                (itPai->second.estereotipo == "kind" ||
-                itPai->second.estereotipo == "subkind")) {
-                paiRigido = true;
+            auto itPai = classesGlobais.find(pai);
+            if (itPai != classesGlobais.end()) {
+                const string& estPai = itPai->second->estereotipo;
+                if (estPai == "kind" || estPai == "subkind") {
+                    paiRigido = true;
+                }
             }
         }
 
         if (!paiRigido) {
             erros.push_back(
+                "[Linha " + to_string(classe.linha) + "] "
                 "[Subkind Pattern] '" + nomeClasse +
                 "' deve herdar de um Kind ou outro Subkind."
             );
@@ -99,7 +111,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
 
             if (!participaDeGenset) {
                 erros.push_back(
-                    "[Subkind Pattern] '" + nomeClasse +
+                    "[Linha " + to_string(classe.linha) + "] "
+                    + "[Subkind Pattern] '" + nomeClasse +
                     "' especializa um general com múltiplos subkinds e deve participar de um genset."
                 );
                 continue;
@@ -107,13 +120,15 @@ verificar_semantica_por_pacote(const Sintese& sintese)
 
             // OK com genset
             padroes_identificados.push_back(
-                "[OK] Subkind Pattern (" + nomeClasse + ")"
+                "[Linha " + to_string(classe.linha) + "] "
+                + "[OK] Subkind Pattern (" + nomeClasse + ")"
             );
 
         } else {
             // 5. Filho único → genset dispensado
             padroes_identificados.push_back(
-                "[OK] Subkind Pattern (" + nomeClasse +
+                "[Linha " + to_string(classe.linha) + "] "
+                + "[OK] Subkind Pattern (" + nomeClasse +
                 ") — aceito por ser subkind único (genset dispensado)"
             );
         }
@@ -127,32 +142,17 @@ verificar_semantica_por_pacote(const Sintese& sintese)
             // 1. Deve especializar um Kind
             if (classe.parents.empty()) {
                 erros.push_back(
-                    "[Role Pattern] '" + nomeClasse +
+                    "[Linha " + to_string(classe.linha) + "] "
+                    + "[Role Pattern] '" + nomeClasse +
                     "' deve especializar um Kind."
-                );
-                continue;
-            }
-
-            bool paiEhKind = false;
-            for (const auto& pai : classe.parents) {
-                auto itPai = classes.find(pai);
-                if (itPai != classes.end() &&
-                    itPai->second.estereotipo == "kind") {
-                    paiEhKind = true;
-                }
-            }
-
-            if (!paiEhKind) {
-                erros.push_back(
-                    "[Role Pattern] '" + nomeClasse +
-                    "' deve herdar de um Kind."
                 );
                 continue;
             }
 
             // 2. Participar de genset é OPCIONAL → não gera erro
             padroes_identificados.push_back(
-                "[OK] Role Pattern (" + nomeClasse + ")"
+                "[Linha " + to_string(classe.linha) + "] "
+                + "[OK] Role Pattern (" + nomeClasse + ")"
             );
         }
 
@@ -173,7 +173,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
                 auto itGeneral = classes.find(g.general);
                 if (itGeneral == classes.end()) {
                     erros.push_back(
-                        "[Phase Pattern] Classe geral '" + g.general +
+                        "[Linha " + to_string(g.linha) + "] "
+                        + "[Phase Pattern] Classe geral '" + g.general +
                         "' do genset '" + g.nome + "' não existe."
                     );
                     continue;
@@ -184,7 +185,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
                 itGeneral->second.estereotipo != "phase") {
 
                 erros.push_back(
-                    "[Phase Pattern] Classe geral '" + g.general +
+                    "[Linha " + to_string(g.linha) + "] "
+                    + "[Phase Pattern] Classe geral '" + g.general +
                     "' deve ser estereotipada como kind ou phase."
                 );
                 continue;
@@ -193,7 +195,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
                 // Genset deve ser disjoint
                 if (!contem(g.modifiers, "disjoint")) {
                     erros.push_back(
-                        "[Phase Pattern] Genset '" + g.nome +
+                        "[Linha " + to_string(g.linha) + "] "
+                        + "[Phase Pattern] Genset '" + g.nome +
                         "' deve ser marcado como disjoint."
                     );
                     continue;
@@ -207,7 +210,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
                     auto itSpec = classes.find(spec);
                     if (itSpec == classes.end()) {
                         erros.push_back(
-                            "[Phase Pattern] Classe '" + spec +
+                            "[Linha " + to_string(g.linha) + "] "
+                            + "[Phase Pattern] Classe '" + spec +
                             "' do genset '" + g.nome + "' não existe."
                         );
                         erro = true;
@@ -216,7 +220,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
 
                     if (itSpec->second.estereotipo != "phase") {
                         erros.push_back(
-                            "[Phase Pattern] Classe '" + spec +
+                            "[Linha " + to_string(g.linha) + "] "
+                            + "[Phase Pattern] Classe '" + spec +
                             "' deve ser estereotipada como phase."
                         );
                         erro = true;
@@ -224,7 +229,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
 
                     if (!contem(itSpec->second.parents, g.general)) {
                         erros.push_back(
-                            "[Phase Pattern] Phase '" + spec +
+                            "[Linha " + to_string(g.linha) + "] "
+                            + "[Phase Pattern] Phase '" + spec +
                             "' deve especializar diretamente '" + g.general + "'."
                         );
                         erro = true;
@@ -236,7 +242,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
                 // COMPLETE: se declarado errado → erro
                 if (contem(g.modifiers, "complete") && g.specifics.size() < 2) {
                     erros.push_back(
-                        "[Phase Pattern] Genset '" + g.nome +
+                        "[Linha " + to_string(g.linha) + "] "
+                        + "[Phase Pattern] Genset '" + g.nome +
                         "' marcado como complete deve possuir ao menos duas phases."
                     );
                     continue;
@@ -244,7 +251,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
 
                 // OK
                 padroes_identificados.push_back(
-                    "[OK] Phase Pattern (" + g.nome + ")"
+                    "[Linha " + to_string(g.linha) + "] "
+                    + "[OK] Phase Pattern (" + g.nome + ")"
                 );
             }
         }
@@ -252,48 +260,51 @@ verificar_semantica_por_pacote(const Sintese& sintese)
         // 4. RELATOR PATTERN
         for (const auto& [nomeClasse, classe] : classes) {
 
-            if (classe.estereotipo != "relator") continue;
+        if (classe.estereotipo != "relator") continue;
 
-            int mediacoes = 0;
+        int mediacoesValidas = 0;
 
-            for (const auto& rel : classe.relacoes_internas) {
+        for (const auto& rel : classe.relacoes_internas) {
 
-                auto it = classes.find(rel.target);
-                if (it == classes.end()) {
-                    erros.push_back(
-                        "[Relator Pattern] O relator '" + nomeClasse +
-                        "' media uma classe inexistente: '" + rel.target + "'."
-                    );
-                    continue;
-                }
-
-                if (it->second.estereotipo == "role" || it->second.estereotipo == "phase") {
-                    mediacoes++;
-                } else {
-                    erros.push_back(
-                        "[Relator Pattern] O relator '" + nomeClasse +
-                        "' media '" + rel.target +
-                        "' com estereótipo inválido ('" +
-                        it->second.estereotipo +
-                        "'). Esperado: role ou phase."
-                    );
-                    mediacoes++;
-                }
-                
+            auto it = classesGlobais.find(rel.target);
+            if (it == classesGlobais.end()) {
+                erros.push_back(
+                    "[Linha " + to_string(classe.linha) + "] "
+                    "[Relator Pattern] O relator '" + nomeClasse +
+                    "' media uma classe inexistente: '" + rel.target + "'."
+                );
+                continue;
             }
 
-            if (mediacoes < 2) {
-                erros.push_back(
-                    "[Relator Pattern] O relator '" + nomeClasse +
-                    "' deve possuir pelo menos 2 mediações (@mediation) válidas para roles."
-                );
+            const string& est = it->second->estereotipo;
+
+            if (est == "role") {
+                mediacoesValidas++;
             } else {
-                padroes_identificados.push_back(
-                    "[OK] Relator Pattern (" + nomeClasse + ")"
+                erros.push_back(
+                    "[Linha " + to_string(classe.linha) + "] "
+                    "[Relator Pattern] O relator '" + nomeClasse +
+                    "' media '" + rel.target +
+                    "' com estereótipo inválido ('" + est +
+                    "'). Esperado: role, kind ou subkind."
                 );
             }
         }
 
+        if (mediacoesValidas < 2) {
+            erros.push_back(
+                "[Linha " + to_string(classe.linha) + "] "
+                "[Relator Pattern] O relator '" + nomeClasse +
+                "' deve possuir pelo menos 2 mediações (@mediation) válidas."
+            );
+        } else {
+            padroes_identificados.push_back(
+                "[Linha " + to_string(classe.linha) + "] "
+                "[OK] Relator Pattern (" + nomeClasse + ")"
+            );
+        }
+        }
+        
         // 5. MODE PATTERN
         for (const auto& [nomeClasse, classe] : classes) {
 
@@ -312,21 +323,24 @@ verificar_semantica_por_pacote(const Sintese& sintese)
 
             if (!temCharacterization) {
                 erros.push_back(
-                    "[Mode Pattern] '" + nomeClasse +
+                    "[Linha " + to_string(classe.linha) + "] "
+                    + "[Mode Pattern] '" + nomeClasse +
                     "' deve possuir uma relação @characterization."
                 );
             }
 
             if (!temExternalDependence) {
                 erros.push_back(
-                    "[Mode Pattern] '" + nomeClasse +
+                    "[Linha " + to_string(classe.linha) + "] "
+                    + "[Mode Pattern] '" + nomeClasse +
                     "' deve possuir uma relação @externalDependence."
                 );
             }
 
             if (temCharacterization && temExternalDependence) {
                 padroes_identificados.push_back(
-                    "[OK] Mode Pattern (" + nomeClasse + ")"
+                    "[Linha " + to_string(classe.linha) + "] "
+                    + "[OK] Mode Pattern (" + nomeClasse + ")"
                 );
             }
         }
@@ -347,7 +361,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
 
             if (!gensetEncontrado) {
                 erros.push_back(
-                    "[RoleMixin Pattern] '" + nomeClasse +
+                    "[Linha " + to_string(classe.linha) + "] "
+                    + "[RoleMixin Pattern] '" + nomeClasse +
                     "' deve ser a classe geral de um genset disjoint e complete."
                 );
                 continue;
@@ -358,7 +373,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
 
             if (!isDisjoint || !isComplete) {
                 erros.push_back(
-                    "[RoleMixin Pattern] Genset '" + gensetEncontrado->nome +
+                    "[Linha " + to_string(classe.linha) + "] "
+                    + "[RoleMixin Pattern] Genset '" + gensetEncontrado->nome +
                     "' deve ser marcado como disjoint e complete."
                 );
                 continue;
@@ -371,7 +387,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
                     itSpec->second.estereotipo != "role") {
 
                     erros.push_back(
-                        "[RoleMixin Pattern] A classe '" + spec +
+                        "[Linha " + to_string(classe.linha) + "] "
+                        + "[RoleMixin Pattern] A classe '" + spec +
                         "' deve ser estereotipada como role."
                     );
                     todasSaoRoles = false;
@@ -380,7 +397,8 @@ verificar_semantica_por_pacote(const Sintese& sintese)
 
             if (todasSaoRoles) {
                 padroes_identificados.push_back(
-                    "[OK] RoleMixin Pattern (" + nomeClasse + ")"
+                    "[Linha " + to_string(classe.linha) + "] "
+                    + "[OK] RoleMixin Pattern (" + nomeClasse + ")"
                 );
             }
         }
