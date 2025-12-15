@@ -34,9 +34,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
         const auto& gensets = pacote.generalizacoes;
         const auto& relacoes_externas = pacote.relacoes_externas;
 
-        // =====================================================
         // 1. SUBKIND PATTERN
-        // =====================================================
         map<string, vector<string>> subkindsPorGeneral;
 
         for (const auto& [nomeClasse, classe] : classes) {
@@ -121,9 +119,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
         }
         }
 
-        // =====================================================
         // 2. ROLE PATTERN
-        // =====================================================
         for (const auto& [nomeClasse, classe] : classes) {
 
             if (classe.estereotipo != "role") continue;
@@ -160,9 +156,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
             );
         }
 
-
         // 3. PHASE PATTERN
-        // Verifica se existe alguma phase no pacote
         bool existePhaseNoPacote = false;
         for (const auto& [_, c] : classes) {
             if (c.estereotipo == "phase") {
@@ -196,7 +190,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
                 continue;
                }
 
-                // Genset deve ser disjoint (OBRIGATÓRIO)
+                // Genset deve ser disjoint
                 if (!contem(g.modifiers, "disjoint")) {
                     erros.push_back(
                         "[Phase Pattern] Genset '" + g.nome +
@@ -255,10 +249,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
             }
         }
 
-
-        // =====================================================
         // 4. RELATOR PATTERN
-        // =====================================================
         for (const auto& [nomeClasse, classe] : classes) {
 
             if (classe.estereotipo != "relator") continue;
@@ -303,9 +294,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
             }
         }
 
-        // =====================================================
         // 5. MODE PATTERN
-        // =====================================================
         for (const auto& [nomeClasse, classe] : classes) {
 
             if (classe.estereotipo != "mode") continue;
@@ -342,9 +331,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
             }
         }
 
-        // =====================================================
         // 6. ROLE MIXIN PATTERN
-        // =====================================================
         for (const auto& [nomeClasse, classe] : classes) {
 
             if (classe.estereotipo != "roleMixin") continue;
@@ -398,9 +385,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
             }
         }
 
-        // =====================================================
         // SALVAR RELATÓRIO DO PACOTE
-        // =====================================================
         relatorios[nomePacote] = { padroes_identificados, erros };
     }
 

@@ -1,0 +1,74 @@
+======================================================
+        RELATÓRIO DE SÍNTESE SINTÁTICA (NORMALIZADO)
+======================================================
+
+======================================================
+PACOTE: ConsultaMedica
+======================================================
+
+[CLASSES]
+- Consulta_Medica (stereotype=relator)
+
+[RELAÇÕES INTERNAS]
+- source: Consulta_Medica --(@mediation)--> Paciente | card: [1]
+- source: Consulta_Medica --(@mediation)--> Medico | card: [1]
+
+======================================================
+PACOTE: FuncionarioDaUBS
+======================================================
+
+[CLASSES]
+- FuncionarioDaUBS (stereotype=role) | parents: Pessoa
+- Enfermeiro (stereotype=role) | parents: FuncionarioDaUBS
+- Medico (stereotype=role) | parents: FuncionarioDaUBS
+
+[GENSETS]
+- Paciente_E_Funcionario
+  general   : Pessoa
+  specifics : Paciente, FuncionarioDaUBS
+  modifiers : disjoint, complete
+- CargosNaUBS
+  general   : FuncionarioDaUBS
+  specifics : Enfermeiro, Medico
+  modifiers : disjoint, complete
+
+======================================================
+PACOTE: Paciente
+======================================================
+
+[CLASSES]
+- Paciente (stereotype=role) | parents: Pessoa
+
+======================================================
+PACOTE: Pessoa
+======================================================
+
+[CLASSES]
+- Pessoa (stereotype=kind)
+- Crianca (stereotype=phase) | parents: Pessoa
+- Adolescente (stereotype=phase) | parents: Pessoa
+- Adulto (stereotype=phase) | parents: Pessoa
+- Idoso (stereotype=phase) | parents: Pessoa
+
+======================================================
+PACOTE: UBS
+======================================================
+
+[CLASSES]
+- Unidade_Basica_De_Saude (stereotype=kind)
+- Servico_Basico_De_Saude (stereotype=relator)
+- Vinculo_Empregaticio (stereotype=relator)
+
+[RELAÇÕES INTERNAS]
+- source: Servico_Basico_De_Saude --(@mediation)--> Unidade_Basica_De_Saude | card: [1..*]
+- source: Servico_Basico_De_Saude --(@mediation)--> Paciente | card: [1..*]
+
+- source: Vinculo_Empregaticio --(@mediation)--> Unidade_Basica_De_Saude | card: [1]
+- source: Vinculo_Empregaticio --(@mediation)--> FuncionarioDaUBS | card: [1..*]
+
+======================================================
+PACOTE: Vacinacao
+======================================================
+
+[CLASSES]
+- Vacina (stereotype=kind)

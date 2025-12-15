@@ -1,0 +1,28 @@
+---------------------------------------------
+        RELATÓRIO DE ANÁLISE SEMÂNTICA
+---------------------------------------------
+
+---------------------------------------------
+PACOTE: TDAH
+---------------------------------------------
+
+[PADRÕES COMPLETOS IDENTIFICADOS]
+- [OK] Subkind Pattern (Dextroamphetamine_)
+- [OK] Subkind Pattern (Methylphenidate_)
+- [OK] Role Pattern (Doctor)
+- [OK] Role Pattern (Patient)
+- [OK] Role Pattern (Psychologist)
+
+[PADRÕES INCOMPLETOS]
+- [Subkind Pattern] 'Criterion_A1' especializa um general com múltiplos subkinds e deve participar de um genset.
+- [Subkind Pattern] 'Criterion_A2' especializa um general com múltiplos subkinds e deve participar de um genset.
+- [Phase Pattern] Classe 'Dextroamphetamine_' deve ser estereotipada como phase.
+- [Phase Pattern] Classe 'Methylphenidate_' deve ser estereotipada como phase.
+- [Phase Pattern] Classe geral 'Patient' deve ser estereotipada como kind ou phase.
+- [Relator Pattern] O relator 'Medical_Report' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
+- [Relator Pattern] O relator 'Prescription' deve possuir pelo menos 2 mediações (@mediation) válidas para roles.
+- [Mode Pattern] 'Behavioral_Therapy' deve possuir uma relação @characterization.
+- [Mode Pattern] 'Behavioral_Therapy' deve possuir uma relação @externalDependence.
+- [Mode Pattern] 'Medication_Therapy' deve possuir uma relação @characterization.
+- [Mode Pattern] 'Medication_Therapy' deve possuir uma relação @externalDependence.
+

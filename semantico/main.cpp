@@ -199,9 +199,29 @@ Sintese ler_relatorio(const string& caminho) {
 
     return sintese;
 }
-int main() {
+int main(int argc, char* argv[]) {
 
-    Sintese sintese = ler_relatorio("testes/teste2_Syntax_analysis.txt");
+    if (argc < 2) {
+        cerr << "Uso: ./analisador <arquivo_sintatico.txt>\n";
+        return 1;
+    }
+
+    string caminhoEntrada = argv[1];
+    string nomeArquivo = caminhoEntrada;
+
+    size_t posBarra = nomeArquivo.find_last_of("/\\");
+    if (posBarra != string::npos) {
+        nomeArquivo = nomeArquivo.substr(posBarra + 1);
+    }
+
+    size_t posUnderscore = nomeArquivo.find('_');
+    if (posUnderscore != string::npos) {
+        nomeArquivo = nomeArquivo.substr(0, posUnderscore);
+    }
+
+    string caminhoSaida = "output/" + nomeArquivo + "_relatorio_semantico.txt";
+    
+    Sintese sintese = ler_relatorio(caminhoEntrada);
 
     auto resultados_por_pacote = verificar_semantica_por_pacote(sintese);
 
@@ -221,10 +241,12 @@ int main() {
         sintese,
         padroes,
         incompletos,
-        "output/relatorio_semantico.txt"
+        caminhoSaida
     );
 
-    cout << "Relatório semântico gerado com sucesso.\n";
+    cout << "Relatório semântico gerado com sucesso em:\n"
+         << caminhoSaida << endl;
+
     return 0;
 }
 

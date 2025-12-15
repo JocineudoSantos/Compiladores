@@ -1,0 +1,170 @@
+======================================================
+        RELATÓRIO DE SÍNTESE SINTÁTICA (NORMALIZADO)
+======================================================
+
+======================================================
+PACOTE: CoberturasDePizza
+======================================================
+
+[CLASSES]
+- Calabresa (stereotype=subkind) | parents: Carne
+- Presunto (stereotype=subkind) | parents: Carne
+- Salame (stereotype=subkind) | parents: Carne
+
+- Anchova (stereotype=subkind) | parents: Fruto_Do_Mar
+- Atum (stereotype=subkind) | parents: Fruto_Do_Mar
+- Camarao (stereotype=subkind) | parents: Fruto_Do_Mar
+
+- Mussarela (stereotype=subkind) | parents: Queijo
+- Parmesao (stereotype=subkind) | parents: Queijo
+
+- Azeitona (stereotype=subkind) | parents: Vegetal
+- Pimenta (stereotype=subkind) | parents: Vegetal
+- Tomate (stereotype=subkind) | parents: Vegetal
+
+[GENSETS]
+- Opcao_De_Carne
+  general   : Carne
+  specifics : Calabresa, Presunto, Salame
+  modifiers : disjoint, complete
+
+- Opcao_De_Fruto_Do_Mar
+  general   : Fruto_Do_Mar
+  specifics : Anchova, Atum, Camarao
+  modifiers : disjoint, complete
+
+- Opcao_De_Queijo
+  general   : Queijo
+  specifics : Mussarela, Parmesao
+  modifiers : disjoint, complete
+
+- Opcao_De_Vegetal
+  general   : Vegetal
+  specifics : Azeitona, Pimenta, Tomate
+  modifiers : disjoint, complete
+
+======================================================
+PACOTE: Empresa
+======================================================
+
+[CLASSES]
+- Empresa (stereotype=kind)
+- Pizzaria (stereotype=role) | parents: Empresa
+
+======================================================
+PACOTE: ItensDaPizzaria
+======================================================
+
+[CLASSES]
+- Item_Da_Pizzaria (stereotype=kind)
+- Bebida (stereotype=subkind) | parents: Item_Da_Pizzaria
+- Petisco (stereotype=subkind) | parents: Item_Da_Pizzaria
+- Agua (stereotype=subkind) | parents: Bebida
+- Refrigerante (stereotype=subkind) | parents: Bebida
+- Suco (stereotype=subkind) | parents: Bebida
+- Lista_de_Itens (stereotype=collective)
+
+[RELAÇÕES INTERNAS]
+- source: Lista_de_Itens --(@memberOf)--> Item_Da_Pizzaria | card: [0..*]..[1..*]
+
+[GENSETS]
+- Opcao_De_Bebida
+  general   : Bebida
+  specifics : Agua, Refrigerante, Suco
+  modifiers : disjoint, complete
+
+======================================================
+PACOTE: Pessoa
+======================================================
+
+[CLASSES]
+- Pessoa (stereotype=kind)
+- Dono_De_Pizzaria (stereotype=role) | parents: Pessoa
+- Funcionario (stereotype=role) | parents: Pessoa
+- Pizzaiolo (stereotype=role) | parents: Funcionario
+- Atendente (stereotype=role) | parents: Funcionario
+
+[GENSETS]
+- Papel_Da_Pessoa
+  general   : Pessoa
+  specifics : ClienteIndividual, Dono_De_Pizzaria, Funcionario
+  modifiers : disjoint, complete
+- Papel_Do_Funcionario
+  general   : Funcionario
+  specifics : Pizzaiolo, Atendente
+  modifiers : disjoint, complete
+
+======================================================
+PACOTE: Pizza
+======================================================
+
+[CLASSES]
+- Pizza (stereotype=subkind) | parents: Item_Da_Pizzaria
+
+- Massa_Da_Pizza (stereotype=kind)
+- Cobertura_Da_Pizza (stereotype=kind)
+- Borda_Da_Pizza (stereotype=kind)
+
+- Massa_Fina_e_Crocante (stereotype=subkind) | parents: Massa_Da_Pizza
+- Massa_Pan (stereotype=subkind) | parents: Massa_Da_Pizza
+
+- Carne (stereotype=subkind) | parents: Cobertura_Da_Pizza
+- Fruto_Do_Mar (stereotype=subkind) | parents: Cobertura_Da_Pizza
+- Queijo (stereotype=subkind) | parents: Cobertura_Da_Pizza
+- Vegetal (stereotype=subkind) | parents: Cobertura_Da_Pizza
+
+- Borda_Sem_Recheio (stereotype=subkind) | parents: Borda_Da_Pizza
+- Borda_Recheada (stereotype=subkind) | parents: Borda_Da_Pizza
+
+- Composicao_Da_Massa (stereotype=relator)
+- Montagem_Da_Cobertura (stereotype=relator)
+- Montagem_Da_Borda (stereotype=relator)
+
+[RELAÇÕES INTERNAS]
+- source: Composicao_Da_Massa --(@mediation)--> Massa_Da_Pizza | card: [1..*]
+- source: Composicao_Da_Massa --(@mediation)--> Pizza | card: [1..*]
+
+- source: Montagem_Da_Cobertura --(@mediation)--> Cobertura_Da_Pizza | card: [1..*]
+- source: Montagem_Da_Cobertura --(@mediation)--> Pizza | card: [1..*]
+
+- source: Montagem_Da_Borda --(@mediation)--> Borda_Da_Pizza | card: [1..*]
+- source: Montagem_Da_Borda --(@mediation)--> Pizza | card: [1..*]
+
+[GENSETS]
+- Tipo_Do_Item
+  general   : Item_Da_Pizzaria
+  specifics : Pizza, Bebida, Petisco
+  modifiers : disjoint, complete
+- Opcao_De_Massa
+  general   : Massa_Da_Pizza
+  specifics : Massa_Fina_e_Crocante, Massa_Pan
+  modifiers : disjoint, complete
+- Opcao_De_Cobertura
+  general   : Cobertura_Da_Pizza
+  specifics : Carne, Fruto_Do_Mar, Queijo, Vegetal
+  modifiers : disjoint, complete
+- Opcao_De_Borda
+  general   : Borda_Da_Pizza
+  specifics : Borda_Recheada, Borda_Sem_Recheio
+  modifiers : disjoint, complete
+
+======================================================
+PACOTE: Pizzaria
+======================================================
+
+[CLASSES]
+- Atendimento (stereotype=relator)
+- Preparo_Da_Pizza (stereotype=relator)
+- Venda_De_Alimento (stereotype=relator)
+
+[RELAÇÕES INTERNAS]
+- source: Atendimento --(@mediation)--> Atendente | card: [1..*]
+- source: Atendimento --(@mediation)--> Cliente | card: [1..*]
+- source: Atendimento --(@mediation)--> Lista_de_Itens | card: [1..*]
+
+- source: Preparo_Da_Pizza --(@mediation)--> Pizzaiolo | card: [1..*]
+- source: Preparo_Da_Pizza --(@mediation)--> Pizza | card: [1..*]
+
+- source: Venda_De_Alimento --(@mediation)--> Pizzaria | card: [1..*]
+- source: Venda_De_Alimento --(@mediation)--> Cliente | card: [1..*]
+- source: Venda_De_Alimento --(@mediation)--> Item_Da_Pizzaria | card: [1..*]

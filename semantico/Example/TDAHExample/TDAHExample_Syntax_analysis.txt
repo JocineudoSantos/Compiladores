@@ -1,0 +1,69 @@
+
+======================================================
+        RELATÓRIO DE SÍNTESE SINTÁTICA (NORMALIZADO)
+======================================================
+
+======================================================
+PACOTE: TDAH
+======================================================
+
+[CLASSES]
+- Hyperactivity_Symptom (stereotype=category)
+- Neurologically_Based_Condition (stereotype=category) | parents: Medical_Condition
+- Medical_Condition (stereotype=mixin)
+- Inattention_Symptom (stereotype=category)
+- Patient (stereotype=role) | parents: Person
+- Medical_Report (stereotype=relator)
+- Doctor (stereotype=role) | parents: Person
+- Person (stereotype=kind)
+- Behavioral_Therapy (stereotype=mode)
+- Medication_Therapy (stereotype=mode)
+- Methylphenidate_ (stereotype=subkind) | parents: Medicine
+- Dextroamphetamine_ (stereotype=subkind) | parents: Medicine
+- Prescription (stereotype=relator)
+- Preschool_Age (stereotype=phase) | parents: Patient
+- School_Age (stereotype=phase) | parents: Patient
+- Teenager (stereotype=phase) | parents: Patient
+- Adult (stereotype=phase) | parents: Patient
+- Birth_Sex (stereotype=quality)
+- Medicine (stereotype=kind)
+- Psychologist (stereotype=role) | parents: Person
+- Criterion_B (stereotype=kind)
+- Criterion_C (stereotype=kind)
+- Criterion_D (stereotype=kind)
+- Criterion_E (stereotype=kind)
+- Criterion_A1a (stereotype=kind) | parents: Hyperactivity_Symptom
+- Criterion_A1b (stereotype=kind) | parents: Hyperactivity_Symptom
+- Criterion_A1c (stereotype=kind) | parents: Hyperactivity_Symptom
+- Criterion_A1d (stereotype=kind) | parents: Hyperactivity_Symptom
+- Criterion_A1e (stereotype=kind) | parents: Hyperactivity_Symptom
+- Criterion_A1f (stereotype=kind) | parents: Hyperactivity_Symptom
+- Criterion_A1g (stereotype=kind) | parents: Hyperactivity_Symptom
+- Criterion_A1h (stereotype=kind) | parents: Hyperactivity_Symptom
+- Criterion_A1i (stereotype=kind) | parents: Hyperactivity_Symptom
+- Criterion_A2a (stereotype=kind) | parents: Inattention_Symptom
+- Criterion_A2b (stereotype=kind) | parents: Inattention_Symptom
+- Criterion_A2c (stereotype=kind) | parents: Inattention_Symptom
+- Criterion_A2d (stereotype=kind) | parents: Inattention_Symptom
+- Criterion_A2e (stereotype=kind) | parents: Inattention_Symptom
+- Criterion_A2f (stereotype=kind) | parents: Inattention_Symptom
+- Criterion_A2g (stereotype=kind) | parents: Inattention_Symptom
+- Criterion_A2h (stereotype=kind) | parents: Inattention_Symptom
+- Criterion_A2i (stereotype=kind) | parents: Inattention_Symptom
+- Severity (stereotype=quality)
+- Criterion_A1 (stereotype=subkind) | parents: Criterion_A
+- Criterion_A2 (stereotype=subkind) | parents: Criterion_A
+- Criterion_A (stereotype=kind)
+- ADHD (stereotype=kind) | parents: Neurologically_Based_Condition
+
+[RELAÇÕES INTERNAS]
+
+[GENSETS]
+- TypesOfMedicine
+  general   : Medicine
+  specifics : Dextroamphetamine_, Methylphenidate_
+  modifiers : disjoint, complete
+- PhasesOfAPatient
+  general   : Patient
+  specifics : Preschool_Age, School_Age, Adult, Teenager
+  modifiers : disjoint, complete

@@ -1,0 +1,81 @@
+
+======================================================
+        RELATÓRIO DE SÍNTESE SINTÁTICA (NORMALIZADO)
+======================================================
+
+======================================================
+PACOTE: alergiaalimentar
+======================================================
+
+[CLASSES]
+- Paciente (stereotype=kind)
+- Alimento (stereotype=kind)
+- Proteina (stereotype=subkind) | parents: Componente_Alimentar
+- Crianca (stereotype=phase) | parents: Paciente
+- Adulto (stereotype=phase) | parents: Paciente
+- Aditivo_Alimentar (stereotype=subkind) | parents: Componente_Alimentar
+- Carboidrato (stereotype=subkind) | parents: Componente_Alimentar
+- Imuno_Mediada (stereotype=subkind)
+- Nao_Imuno_Mediada (stereotype=subkind)
+- Sintoma (stereotype=mode)
+- Cutaneo (stereotype=subkind)
+- Gastrointestinal (stereotype=subkind)
+- Respiratorio (stereotype=subkind)
+- Sistemico (stereotype=subkind)
+- Alergeno (stereotype=role) | parents: Componente_Alimentar
+- Tratamento (stereotype=relator)
+- Diagnostico (stereotype=relator)
+- Mista (stereotype=subkind)
+- Profissional_de_Saude (stereotype=kind)
+- Ingrediente (stereotype=subkind) | parents: Alimento
+- Formula (stereotype=subkind) | parents: Alimento
+- Teste_de_Dosagem_IgE_Serica (stereotype=subkind) | parents: Procedimento
+- Teste_de_Provocacao_Oral (stereotype=subkind) | parents: Procedimento
+- Procedimento (stereotype=kind)
+- Dieta_de_Exclusao (stereotype=subkind)
+- Medicamento (stereotype=subkind)
+- Imunoterapia_Oral (stereotype=subkind)
+- Comobidarde_Alergica (stereotype=quality)
+- Heranca_Genetica (stereotype=quality)
+- Reacao_Cruzada (stereotype=event) | parents: Reacao_Adversa
+- Alergia (stereotype=relator)
+- Reacao_Adversa (stereotype=event)
+- Componente_Alimentar (stereotype=kind)
+- Consumo_Alimentar (stereotype=event)
+- Teste_Cutaneo (stereotype=subkind) | parents: Procedimento
+- Disposicao_Alergica (stereotype=mode)
+- Exposicao_ao_Alergeno (stereotype=situation)
+- Avaliacao_de_Risco (stereotype=relator)
+- Nivel_de_Risco (stereotype=quality)
+
+[RELAÇÕES INTERNAS]
+
+[GENSETS]
+- disjoint_complete
+  general   : Componente_Alimentar
+  specifics : Proteina, Aditivo_Alimentar, Carboidrato
+  modifiers : (none)
+- disjoint_complete
+  general   : Alergia
+  specifics : Imuno_Mediada, Mista, Nao_Imuno_Mediada
+  modifiers : (none)
+- disjoint_complete
+  general   : Sintoma
+  specifics : Respiratorio, Sistemico, Gastrointestinal, Cutaneo
+  modifiers : (none)
+- disjoint_complete
+  general   : Procedimento
+  specifics : Teste_Cutaneo, Teste_de_Dosagem_IgE_Serica, Teste_de_Provocacao_Oral
+  modifiers : (none)
+- disjoint_complete
+  general   : Alimento
+  specifics : Formula, Ingrediente
+  modifiers : (none)
+- disjoint_complete
+  general   : Paciente
+  specifics : Crianca, Adulto
+  modifiers : (none)
+- disjoint_complete
+  general   : Tratamento
+  specifics : Imunoterapia_Oral, Medicamento, Dieta_de_Exclusao
+  modifiers : (none)
