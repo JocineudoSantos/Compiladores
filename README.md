@@ -33,7 +33,7 @@ Compiladores/
 │ ├── Example/ # Todos os exemplos do github do professor
 │ └── teste.tonto # Um teste incluso da biblioteca do professor
 │
-├── sintatico/ # Pasta que contem o analisador sintatico da linguagem tonto.
+├── semantico # Pasta que contem o analisador semantico da linguagem tonto.
 │ ├── semantico.cpp # Arquivo com o analisador semântico
 │ ├── semantico.h # Arquivo com as definições
 │ ├── main.cpp # Arquivo principal que executa o analisador
@@ -115,3 +115,4 @@ E utilizar em um arquivo, considerando que esteja na pasta compiladores/semantic
 O arquivo sera gerado na pasta output, lembrando que como nosso sintático junta os arquivos numa
 análise completa, há apenas um arquivo na entrada do semântico (contendo todos os conteúdos dos arquivos de teste)
 ```
+
