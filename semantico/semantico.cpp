@@ -126,14 +126,14 @@ verificar_semantica_por_pacote(const Sintese& sintese)
                 // Subkind válido com genset
                 padroes_identificados.push_back(
                     "[Linha " + to_string(classe.linha) + "] "
-                    + "[OK] Subkind Pattern (" + nomeClasse + ")"
+                    + "Subkind Pattern (" + nomeClasse + ")"
                 );
 
             } else {
                 // Subkind único não exige genset, logo é válido
                 padroes_identificados.push_back(
                     "[Linha " + to_string(classe.linha) + "] "
-                    + "[OK] Subkind Pattern (" + nomeClasse +
+                    + "Subkind Pattern (" + nomeClasse +
                     ") — aceito por ser subkind único (genset dispensado)"
                 );
             }
@@ -157,7 +157,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
             // Participar de genset é OPCIONAL, não gera sugestão
             padroes_identificados.push_back(
                 "[Linha " + to_string(classe.linha) + "] "
-                + "[OK] Role Pattern (" + nomeClasse + ")"
+                + "Role Pattern (" + nomeClasse + ")"
             );
         }
 
@@ -218,7 +218,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
                 // Phase Pattern identificado corretamente
                 padroes_identificados.push_back(
                     "[Linha " + to_string(g.linha) + "] "
-                    + "[OK] Phase Pattern (" + g.nome + ")"
+                    + "Phase Pattern (" + g.nome + ")"
                 );
             }
         }
@@ -238,7 +238,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
                 sugestao.push_back(
                     "[Linha " + to_string(classe.linha) + "] "
                     "[Relator Pattern] O relator '" + nomeClasse +
-                    "' media uma classe inexistente: '" + rel.target + "'."
+                    "'media uma classe inexistente: '" + rel.target + "'."
                 );
                 continue;
             }
@@ -271,7 +271,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
         } else {
             padroes_identificados.push_back(
                 "[Linha " + to_string(classe.linha) + "] "
-                "[OK] Relator Pattern (" + nomeClasse + ")"
+                "Relator Pattern (" + nomeClasse + ")"
             );
         }
         }
@@ -312,7 +312,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
             if (temCharacterization && temExternalDependence) {
                 padroes_identificados.push_back(
                     "[Linha " + to_string(classe.linha) + "] "
-                    + "[OK] Mode Pattern (" + nomeClasse + ")"
+                    + "Mode Pattern (" + nomeClasse + ")"
                 );
             }
         }
@@ -374,7 +374,7 @@ verificar_semantica_por_pacote(const Sintese& sintese)
             if (todasSaoRoles) {
                 padroes_identificados.push_back(
                     "[Linha " + to_string(classe.linha) + "] "
-                    + "[OK] RoleMixin Pattern (" + nomeClasse + ")"
+                    + "RoleMixin Pattern (" + nomeClasse + ")"
                 );
             }
         }
