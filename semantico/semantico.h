@@ -46,7 +46,7 @@ struct SintesePacote {
 };
 
 struct Sintese {
-    map<string, SintesePacote> pacotes; // chave = nome do package
+    map<string, SintesePacote> pacotes;
 };
 
 // FUNÇÕES UTILITÁRIAS 

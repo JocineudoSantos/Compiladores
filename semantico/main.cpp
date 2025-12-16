@@ -111,20 +111,19 @@ Sintese ler_relatorio(const string& caminho) {
         line = trim(line);
         if (line.empty()) continue;
 
-        // PACOTE
         if (line.rfind("PACOTE:", 0) == 0) {
             pacoteAtual = trim(line.substr(7));
             sintese.pacotes[pacoteAtual];
             secaoAtual.clear();
             continue;
         }
-        // SEÇÃO
+
         if (line[0] == '[') {
             secaoAtual = line;
             continue;
         }
 
-        // CLASSES
+
         if (secaoAtual == "[CLASSES]" && line[0] == '-') {
 
             // - Nome (stereotype=kind) | parents: A, B
@@ -153,7 +152,6 @@ Sintese ler_relatorio(const string& caminho) {
             }
         }
 
-        // RELAÇÕES INTERNAS
         else if (secaoAtual == "[RELAÇÕES INTERNAS]" && line[0] == '-') {
 
             // - source: A --(@mediation)--> B
@@ -187,9 +185,13 @@ Sintese ler_relatorio(const string& caminho) {
                 .push_back(r);
         }
 
-        // GENSETS
         else if (secaoAtual == "[GENSETS]") {
-
+            
+            // [GENSETS]
+            // - AgePhase
+            // general   : LivingPerson
+            // specifics : Child, Teenager, Adult
+            // modifiers : disjoint, complete
             if (line[0] == '-') {
                 if (lendoGenset) {
                     sintese.pacotes[pacoteAtual].generalizacoes.push_back(genset);
